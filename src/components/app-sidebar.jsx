@@ -2,7 +2,7 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
+  // SidebarGroup,
   SidebarHeader,
 } from '@/components/ui/sidebar';
 
@@ -19,8 +19,7 @@ export function AppSidebar() {
             <li>Tarjetas</li>
           </ul>
         </nav>
-        <SidebarGroup />
-        <SidebarGroup />
+        {/* <SidebarGroup /> */}
       </SidebarContent>
       <SidebarFooter />
     </Sidebar>
