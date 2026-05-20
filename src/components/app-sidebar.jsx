@@ -40,6 +40,11 @@ export function AppSidebar() {
                 Tarjetas
               </Link>
             </li>
+            <li>
+              <Link to="/resumen" className="block p-2 hover:bg-accent rounded">
+                Resumen
+              </Link>
+            </li>
           </ul>
         </nav>
         {/* <SidebarGroup /> */}
