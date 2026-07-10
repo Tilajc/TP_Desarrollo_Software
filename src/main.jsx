@@ -7,6 +7,7 @@ import Home from './pages/Home.jsx';
 import Subjects from './pages/Subjects.jsx';
 import Notes from './pages/Notes.jsx';
 import Cards from './pages/Cards.jsx';
+import Summary from './pages/Summary.jsx';
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
       {
         path: '/tarjetas',
         element: <Cards />,
+      },
+      {
+        path: '/resumen',
+        element: <Summary />,
       },
     ],
   },
