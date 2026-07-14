@@ -1,5 +1,4 @@
-import { useState } from 'react'; // <-- Importante tener el useState aquí
-import { Textarea } from '../components/ui/textarea.jsx';
+import { useState } from 'react';
 import { Button } from '../components/ui/button.jsx';
 
 const Summary = () => {
@@ -7,7 +6,6 @@ const Summary = () => {
 
   return (
     <div className="w-full min-h-screen bg-[#0b0f19] text-slate-200 flex flex-col p-4 md:items-center md:justify-center">
-
       <div className="w-full md:max-w-2xl bg-[#0f1422] border border-slate-800 rounded-xl p-4 sm:p-6 shadow-2xl flex flex-col flex-1 md:flex-none">
         {/* Encabezado */}
         <h1 className="text-xl font-semibold text-white mb-5">Nuevo resumen</h1>
@@ -32,7 +30,7 @@ const Summary = () => {
               Apunte de referencia
             </label>
 
-
+            <div className="flex flex-col sm:flex-row gap-2">
               <div className="relative flex-1">
                 <select className="w-full bg-[#0b0f19]/60 border border-slate-800 rounded-lg pl-9 pr-8 py-2 text-sm text-slate-200 appearance-none focus:outline-none focus:border-purple-500 transition-colors cursor-pointer">
                   <option value="">Buscar en mis apuntes subidos...</option>
@@ -40,7 +38,6 @@ const Summary = () => {
                   <option value="integrales">Integrales_Final.pdf</option>
                   <option value="algebra">Apunte_Algebra_UTN.pdf</option>
                 </select>
-
                 <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-500">
                   <svg
                     className="w-4 h-4"
@@ -56,7 +53,6 @@ const Summary = () => {
                     />
                   </svg>
                 </div>
-
                 <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400">
                   <svg
                     className="w-4 h-4"
@@ -73,7 +69,6 @@ const Summary = () => {
                   </svg>
                 </div>
               </div>
-
 
               <label className="flex items-center justify-center gap-2 bg-[#161b2c] hover:bg-[#1e253f] border border-slate-800 text-slate-300 px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer whitespace-nowrap">
                 <svg
@@ -101,7 +96,6 @@ const Summary = () => {
 
           {/* Contenedor del Editor de Texto */}
           <div className="border border-slate-800 rounded-lg overflow-hidden bg-[#0b0f19]/40 flex flex-col flex-1">
-
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 bg-[#0b0f19]/80 border-b border-slate-800 px-3 py-2 text-slate-400 text-xs">
               <span className="font-bold cursor-pointer hover:text-slate-200">
                 B
@@ -132,14 +126,12 @@ const Summary = () => {
               </div>
             </div>
 
-            {/* Cuerpo del Editor */}
             <div
               className="p-4 text-sm text-slate-300 focus:outline-none min-h-[250px] md:min-h-[300px] flex-1 relative empty:before:content-[attr(placeholder)] empty:before:text-slate-600 empty:before:pointer-events-none select-text"
               contentEditable
               suppressContentEditableWarning
               placeholder="Escribí tu resumen acá..."
               onFocus={(e) => {
-
                 if (!isCleaned) {
                   e.currentTarget.innerHTML = '';
                   setIsCleaned(true);
