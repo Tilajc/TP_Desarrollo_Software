@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Textarea } from '../components/ui/textarea.jsx';
 import { Button } from '../components/ui/button.jsx';
 
 const Summary = () => {
@@ -39,7 +38,6 @@ const Summary = () => {
                   <option value="integrales">Integrales_Final.pdf</option>
                   <option value="algebra">Apunte_Algebra_UTN.pdf</option>
                 </select>
-
                 <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-500">
                   <svg
                     className="w-4 h-4"
@@ -55,7 +53,6 @@ const Summary = () => {
                     />
                   </svg>
                 </div>
-
                 <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400">
                   <svg
                     className="w-4 h-4"
@@ -129,7 +126,6 @@ const Summary = () => {
               </div>
             </div>
 
-            {/* Cuerpo del Editor */}
             <div
               className="p-4 text-sm text-slate-300 focus:outline-none min-h-[250px] md:min-h-[300px] flex-1 relative empty:before:content-[attr(placeholder)] empty:before:text-slate-600 empty:before:pointer-events-none select-text"
               contentEditable
