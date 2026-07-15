@@ -20,7 +20,6 @@ const Student = () => {
         { title: 'Promedio general', value: '8.6/10' },
       ]}
     >
-      {/* Componentes propios del alumno (Usa Cards de shadcn dentro) */}
       <Card className="col-span-1 lg:col-span-2 bg-slate-900 border-slate-800 text-slate-50">
         <CardContent className="p-6">Mis Materias...</CardContent>
       </Card>

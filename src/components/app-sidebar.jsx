@@ -51,12 +51,15 @@ const AppSidebar = () => {
                 to="/alumno"
                 className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
               >
-               Alumno
-            <li>
+                Alumno
+              </Link>
+            </li>
+            <li className="mb-4">
               <Link
                 to="/resumen"
-                className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors">
-                 Resumen
+                className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
+              >
+                Resumen
               </Link>
             </li>
           </ul>
