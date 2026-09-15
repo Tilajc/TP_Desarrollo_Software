@@ -1,6 +1,6 @@
 import { BookOpen, FileText, CheckSquare } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import Dashboard from '@/components/dashboard';
+import Dashboard from '@/components/Dashboard';
 
 const Student = () => {
   return (
