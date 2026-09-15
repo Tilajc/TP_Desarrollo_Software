@@ -7,12 +7,9 @@ const Summary = () => {
   return (
     <div className="w-full min-h-screen bg-[#0b0f19] text-slate-200 flex flex-col p-4 md:items-center md:justify-center">
       <div className="w-full md:max-w-2xl bg-[#0f1422] border border-slate-800 rounded-xl p-4 sm:p-6 shadow-2xl flex flex-col flex-1 md:flex-none">
-        {/* Encabezado */}
         <h1 className="text-xl font-semibold text-white mb-5">Nuevo resumen</h1>
 
-        {/* Formulario */}
         <div className="space-y-4 flex-1">
-          {/* Campo: Título */}
           <div>
             <label className="block text-xs text-slate-400 mb-1.5 font-medium">
               Título del resumen
@@ -24,7 +21,6 @@ const Summary = () => {
             />
           </div>
 
-          {/* Campo: Apunte de referencia */}
           <div>
             <label className="block text-xs text-slate-400 mb-1.5 font-medium">
               Apunte de referencia
@@ -106,7 +102,7 @@ const Summary = () => {
               <span className="underline cursor-pointer hover:text-slate-200">
                 U
               </span>
-              <div className="h-4 w-[1px] bg-slate-800" />
+              <div className="h-4 w-px bg-slate-800" />
               <span className="cursor-pointer hover:text-slate-200">☰</span>
               <span className="cursor-pointer hover:text-slate-200">☷</span>
               <span className="cursor-pointer hover:text-slate-200">🔗</span>
@@ -127,7 +123,7 @@ const Summary = () => {
             </div>
 
             <div
-              className="p-4 text-sm text-slate-300 focus:outline-none min-h-[250px] md:min-h-[300px] flex-1 relative empty:before:content-[attr(placeholder)] empty:before:text-slate-600 empty:before:pointer-events-none select-text"
+              className="p-4 text-sm text-slate-300 focus:outline-none min-h-62.5 md:min-h-75 flex-1 relative empty:before:content-[attr(placeholder)] empty:before:text-slate-600 empty:before:pointer-events-none select-text"
               contentEditable
               suppressContentEditableWarning
               placeholder="Escribí tu resumen acá..."
