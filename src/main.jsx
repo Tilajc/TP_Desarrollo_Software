@@ -8,8 +8,8 @@ import Home from './pages/Home.jsx';
 import Subjects from './pages/Subjects.jsx';
 import Notes from './pages/Notes.jsx';
 import Cards from './pages/Cards.jsx';
-import Student from './pages/Student.jsx';
-import Summary from './pages/Summary.jsx';
+import Students from './pages/Students.jsx';
+import Summaries from './pages/Summaries.jsx';
 
 const queryClient = new QueryClient();
 
@@ -36,11 +36,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/alumno',
-        element: <Student />,
+        element: <Students />,
       },
       {
         path: '/resumen',
-        element: <Summary />,
+        element: <Summaries />,
       },
     ],
   },
