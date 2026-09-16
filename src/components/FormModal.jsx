@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -10,7 +10,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-export function FormModal({
+const FormModal = ({
   open,
   onOpenChange,
   title,
@@ -18,19 +18,15 @@ export function FormModal({
   initialData = null,
   onSubmit,
   isLoading,
-}) {
-  const [formData, setFormData] = useState({});
-
-  useEffect(() => {
-    if (open) {
-      const defaultState = {};
-      fields.forEach((field) => {
-        defaultState[field.name] =
-          initialData?.[field.name] ?? field.defaultValue ?? '';
-      });
-      setFormData(defaultState);
-    }
-  }, [open, initialData, fields]);
+}) => {
+  const [formData, setFormData] = useState(() => {
+    const defaultState = {};
+    fields.forEach((field) => {
+      defaultState[field.name] =
+        initialData?.[field.name] ?? field.defaultValue ?? '';
+    });
+    return defaultState;
+  });
 
   const handleChange = (name, value) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -65,7 +61,7 @@ export function FormModal({
 
           <DialogFooter className="pt-2">
             <Button
-              className="cursor-pointer"
+              className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
               type="submit"
               disabled={isLoading}
             >
@@ -76,4 +72,6 @@ export function FormModal({
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default FormModal;

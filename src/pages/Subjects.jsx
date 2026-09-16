@@ -5,7 +5,7 @@ import {
   useUpdateSubject,
   useDeleteSubject,
 } from '../hooks/useSubjects';
-import { FormModal } from '../components/FormModal';
+import FormModal from '../components/FormModal';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -37,6 +37,7 @@ const Subjects = () => {
   const deleteMutation = useDeleteSubject();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState(null);
 
   const handleOpenCreate = () => {
@@ -47,6 +48,11 @@ const Subjects = () => {
   const handleOpenEdit = (subject) => {
     setSelectedSubject(subject);
     setIsModalOpen(true);
+  };
+
+  const handleOpenDelete = (subject) => {
+    setSelectedSubject(subject);
+    setIsDeleteModalOpen(true);
   };
 
   const handleSubmit = (formData) => {
@@ -62,10 +68,11 @@ const Subjects = () => {
     }
   };
 
-  const handleDelete = (id) => {
-    if (confirm('¿Estás seguro de que deseas eliminar esta materia?')) {
-      deleteMutation.mutate(id);
-    }
+  const handleDeleteSubmit = () => {
+    if (!selectedSubject) return;
+    deleteMutation.mutate(selectedSubject.id, {
+      onSuccess: () => setIsDeleteModalOpen(false),
+    });
   };
 
   if (isLoading) return <p className="p-4">Cargando materias...</p>;
@@ -105,8 +112,8 @@ const Subjects = () => {
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={() => handleDelete(subject.id)}
-                disabled={deleteMutation.isPending}
+                onClick={() => handleOpenDelete(subject)}
+                className="cursor-pointer"
               >
                 Eliminar
               </Button>
@@ -116,6 +123,7 @@ const Subjects = () => {
       </div>
 
       <FormModal
+        key={selectedSubject ? `edit-${selectedSubject.id}` : 'create-subject'}
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
         title={selectedSubject ? 'Editar Materia' : 'Nueva Materia'}
@@ -123,6 +131,18 @@ const Subjects = () => {
         initialData={selectedSubject}
         onSubmit={handleSubmit}
         isLoading={createMutation.isPending || updateMutation.isPending}
+      />
+
+      <FormModal
+        key={
+          selectedSubject ? `delete-${selectedSubject.id}` : 'delete-subject'
+        }
+        open={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        title={`¿Deseas eliminar la materia "${selectedSubject?.name}"?`}
+        fields={[]}
+        onSubmit={handleDeleteSubmit}
+        isLoading={deleteMutation.isPending}
       />
     </div>
   );
