@@ -5,6 +5,7 @@ import {
   useUpdateSubject,
   useDeleteSubject,
 } from '../hooks/useSubjects';
+import { FormModal } from '../components/FormModal';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -13,51 +14,52 @@ import {
   CardDescription,
   CardFooter,
 } from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
-export default function Subjects() {
+const SUBJECT_FIELDS = [
+  {
+    name: 'name',
+    label: 'Nombre de la Materia',
+    placeholder: 'Ej: Análisis Matemático I',
+    required: true,
+  },
+  {
+    name: 'description',
+    label: 'Descripción',
+    placeholder: 'Descripción opcional',
+    required: false,
+  },
+];
+
+const Subjects = () => {
   const { data: subjects, isLoading, isError } = useSubjects();
   const createMutation = useCreateSubject();
   const updateMutation = useUpdateSubject();
   const deleteMutation = useDeleteSubject();
 
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [editingSubject, setEditingSubject] = useState(null);
-
-  const [formData, setFormData] = useState({ name: '', description: '' });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSubject, setSelectedSubject] = useState(null);
 
   const handleOpenCreate = () => {
-    setFormData({ name: '', description: '' });
-    setIsCreateOpen(true);
+    setSelectedSubject(null);
+    setIsModalOpen(true);
   };
 
   const handleOpenEdit = (subject) => {
-    setEditingSubject(subject);
-    setFormData({ name: subject.name, description: subject.description || '' });
+    setSelectedSubject(subject);
+    setIsModalOpen(true);
   };
 
-  const handleCreate = (e) => {
-    e.preventDefault();
-    createMutation.mutate(formData, {
-      onSuccess: () => setIsCreateOpen(false),
-    });
-  };
-
-  const handleUpdate = (e) => {
-    e.preventDefault();
-    updateMutation.mutate(
-      { id: editingSubject.id, data: formData },
-      { onSuccess: () => setEditingSubject(null) }
-    );
+  const handleSubmit = (formData) => {
+    if (selectedSubject) {
+      updateMutation.mutate(
+        { id: selectedSubject.id, data: formData },
+        { onSuccess: () => setIsModalOpen(false) }
+      );
+    } else {
+      createMutation.mutate(formData, {
+        onSuccess: () => setIsModalOpen(false),
+      });
+    }
   };
 
   const handleDelete = (id) => {
@@ -74,47 +76,12 @@ export default function Subjects() {
     <div className="p-6 max-w-5xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Materias</h1>
-
-        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={handleOpenCreate}>+ Crear Materia</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Nueva Materia</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleCreate} className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Nombre</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  placeholder="Ej: Análisis Matemático I"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="description">Descripción</Label>
-                <Input
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
-                  placeholder="Descripción de la materia"
-                />
-              </div>
-              <DialogFooter>
-                <Button type="submit" disabled={createMutation.isPending}>
-                  {createMutation.isPending ? 'Guardando...' : 'Crear'}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <Button
+          onClick={handleOpenCreate}
+          className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
+        >
+          + Crear Materia
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -131,6 +98,7 @@ export default function Subjects() {
                 variant="outline"
                 size="sm"
                 onClick={() => handleOpenEdit(subject)}
+                className="cursor-pointer"
               >
                 Editar
               </Button>
@@ -147,44 +115,17 @@ export default function Subjects() {
         ))}
       </div>
 
-      <Dialog
-        open={Boolean(editingSubject)}
-        onOpenChange={(open) => !open && setEditingSubject(null)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Editar Materia</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleUpdate} className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-name">Nombre</Label>
-              <Input
-                id="edit-name"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-description">Descripción</Label>
-              <Input
-                id="edit-description"
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-              />
-            </div>
-            <DialogFooter>
-              <Button type="submit" disabled={updateMutation.isPending}>
-                {updateMutation.isPending ? 'Guardando...' : 'Guardar Cambios'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <FormModal
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        title={selectedSubject ? 'Editar Materia' : 'Nueva Materia'}
+        fields={SUBJECT_FIELDS}
+        initialData={selectedSubject}
+        onSubmit={handleSubmit}
+        isLoading={createMutation.isPending || updateMutation.isPending}
+      />
     </div>
   );
-}
+};
+
+export default Subjects;
