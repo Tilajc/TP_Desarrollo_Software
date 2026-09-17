@@ -12,7 +12,6 @@ const Cards = () => {
   return (
     <div className="w-full min-h-screen bg-[#0b0f19] flex items-center justify-center p-4">
       <div className="w-full max-w-lg bg-[#0f1422] border border-slate-800 rounded-2xl p-6 shadow-2xl">
-        {/* Encabezado */}
         <div className="border-b border-slate-800 pb-4 mb-6">
           <h2 className="text-white text-base font-medium text-center">
             Estudiando: Derivadas
@@ -25,7 +24,7 @@ const Cards = () => {
 
         <div
           onClick={() => setShowAnswer(!showAnswer)}
-          className="w-full min-h-[220px] bg-[#0b0f19]/80 border border-slate-800 rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-purple-500/40 transition-all select-none group shadow-inner"
+          className="w-full min-h-55 bg-[#0b0f19]/80 border border-slate-800 rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-purple-500/40 transition-all select-none group shadow-inner"
         >
           {!showAnswer ? (
             <div className="space-y-2">

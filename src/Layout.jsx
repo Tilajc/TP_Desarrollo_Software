@@ -11,7 +11,7 @@ const Layout = () => {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset className="relative flex flex-col flex-1 overflow-y-auto bg-slate-950 text-slate-50">
-        <SidebarTrigger className="absolute top-4 left-4 z-50" />
+        <SidebarTrigger className="absolute top-4 left-4 z-50 cursor-pointer" />
         <main className="p-6 flex-1">
           <Outlet />
         </main>

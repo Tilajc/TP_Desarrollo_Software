@@ -1,6 +1,6 @@
 import { Button } from '../components/ui/button';
 
-function Home() {
+const Home = () => {
   return (
     <section className=" flex flex-col align-middle m-4">
       <h1 className="">This is the home screen</h1>
@@ -9,6 +9,6 @@ function Home() {
       </div>
     </section>
   );
-}
+};
 
 export default Home;
