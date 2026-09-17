@@ -13,7 +13,9 @@ import {
   CardTitle,
   CardDescription,
   CardFooter,
+  CardContent,
 } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const SUBJECT_FIELDS = [
   {
@@ -75,7 +77,34 @@ const Subjects = () => {
     });
   };
 
-  if (isLoading) return <p className="p-4">Cargando materias...</p>;
+  if (isLoading)
+    return (
+      <div className="p-6 max-w-5xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Materias</h1>
+          <Button
+            onClick={handleOpenCreate}
+            className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
+          >
+            + Crear Materia
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Card key={i} className="w-full max-w-xs">
+              <CardHeader>
+                <Skeleton className="h-4 w-2/3" />
+                <Skeleton className="h-4 w-1/2" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="aspect-video w-full" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+
   if (isError)
     return <p className="p-4 text-red-500">Error al cargar las materias.</p>;
 
