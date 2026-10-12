@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   useSubjects,
   useCreateSubject,
@@ -36,6 +37,8 @@ const Subjects = () => {
   const createMutation = useCreateSubject();
   const updateMutation = useUpdateSubject();
   const deleteMutation = useDeleteSubject();
+
+  const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -105,6 +108,13 @@ const Subjects = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardFooter className="flex justify-end gap-2">
+                  <Button
+                    size="sm"
+                    onClick={() => navigate(`/materias/${subject.id}/temas`)}
+                    className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
+                  >
+                    Ver Temas
+                  </Button>
                   <Button
                     variant="outline"
                     size="sm"

@@ -6,6 +6,7 @@ import './index.css';
 import Layout from './Layout';
 import Home from './pages/Home.jsx';
 import Subjects from './pages/Subjects.jsx';
+import Topics from './pages/Topics.jsx';
 import Notes from './pages/Notes.jsx';
 import Cards from './pages/Cards.jsx';
 import Students from './pages/Students.jsx';
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: '/materias',
         element: <Subjects />,
+      },
+      {
+        path: '/materias/:subjectId/temas',
+        element: <Topics />,
       },
       {
         path: '/apuntes',

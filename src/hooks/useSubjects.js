@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   getSubjects,
+  getSubjectById,
   createSubject,
   updateSubject,
   deleteSubject,
@@ -10,6 +11,13 @@ export const useSubjects = () => {
   return useQuery({
     queryKey: ['subjects'],
     queryFn: getSubjects,
+  });
+};
+
+export const useSubject = (id) => {
+  return useQuery({
+    queryKey: ['subjects', id],
+    queryFn: () => getSubjectById(id),
   });
 };
 
