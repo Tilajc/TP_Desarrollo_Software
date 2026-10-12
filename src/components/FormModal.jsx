@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 const FormModal = ({
   open,
@@ -48,14 +49,25 @@ const FormModal = ({
           {fields.map((field) => (
             <div key={field.name} className="space-y-2">
               <Label htmlFor={field.name}>{field.label}</Label>
-              <Input
-                id={field.name}
-                type={field.type || 'text'}
-                value={formData[field.name] || ''}
-                onChange={(e) => handleChange(field.name, e.target.value)}
-                placeholder={field.placeholder}
-                required={field.required}
-              />
+              {field.type === 'textarea' ? (
+                <Textarea
+                  id={field.name}
+                  value={formData[field.name] || ''}
+                  onChange={(e) => handleChange(field.name, e.target.value)}
+                  placeholder={field.placeholder}
+                  required={field.required}
+                  className="max-h-40"
+                />
+              ) : (
+                <Input
+                  id={field.name}
+                  type={field.type || 'text'}
+                  value={formData[field.name] || ''}
+                  onChange={(e) => handleChange(field.name, e.target.value)}
+                  placeholder={field.placeholder}
+                  required={field.required}
+                />
+              )}
             </div>
           ))}
 

@@ -16,7 +16,7 @@ export const useTopics = (subjectId) => {
 
 export const useTopic = (id) => {
   return useQuery({
-    queryKey: ['topics', id],
+    queryKey: ['topics', 'detail', id],
     queryFn: () => getTopicById(id),
   });
 };

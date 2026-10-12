@@ -6,8 +6,8 @@ import {
   useCreateSubject,
   useUpdateSubject,
   useDeleteSubject,
-} from '../hooks/useSubjects';
-import FormModal from '../components/FormModal';
+} from '../../hooks/useSubjects';
+import FormModal from '../../components/FormModal';
 import { Button } from '@/components/ui/button';
 import {
   Card,

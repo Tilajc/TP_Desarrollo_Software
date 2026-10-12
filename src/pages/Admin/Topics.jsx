@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Pencil, X, FileText, Layers } from 'lucide-react';
-import { useSubject } from '../hooks/useSubjects';
+import { useSubject } from '../../hooks/useSubjects';
 import {
   useTopics,
   useCreateTopic,
   useUpdateTopic,
   useDeleteTopic,
-} from '../hooks/useTopics';
-import FormModal from '../components/FormModal';
+} from '../../hooks/useTopics';
+import FormModal from '../../components/FormModal';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import GetSkeleton from '@/components/GetSkeleton';
