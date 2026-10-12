@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Pencil, X, FileText, Layers } from 'lucide-react';
 import { useSubject } from '../hooks/useSubjects';
 import {
   useTopics,
@@ -109,18 +110,18 @@ const Topics = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {topics?.map((topic) => (
-              <Card key={topic.id} className="flex flex-col justify-between">
-                <CardHeader>
-                  <CardTitle>{topic.name}</CardTitle>
-                </CardHeader>
-                <CardFooter className="flex justify-end gap-2">
+              <Card
+                key={topic.id}
+                className="flex flex-col justify-between relative"
+              >
+                <div className="absolute right-0 top-0 z-10 flex gap-2 p-2">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => handleOpenEdit(topic)}
                     className="cursor-pointer"
                   >
-                    Editar
+                    <Pencil />
                   </Button>
                   <Button
                     variant="destructive"
@@ -128,7 +129,37 @@ const Topics = () => {
                     onClick={() => handleOpenDelete(topic)}
                     className="cursor-pointer"
                   >
-                    Eliminar
+                    <X />
+                  </Button>
+                </div>
+
+                <CardHeader>
+                  <CardTitle className="mr-10">{topic.name}</CardTitle>
+                </CardHeader>
+                <CardFooter className="flex justify-between items-center">
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      navigate(
+                        `/materias/${subject.id}/temas/${topic.id}/resumenes`
+                      )
+                    }
+                    className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
+                  >
+                    <FileText />
+                    Resumenes
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      navigate(
+                        `/materias/${subject.id}/temas/${topic.id}/tarjetas`
+                      )
+                    }
+                    className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
+                  >
+                    <Layers />
+                    Tarjetas
                   </Button>
                 </CardFooter>
               </Card>
