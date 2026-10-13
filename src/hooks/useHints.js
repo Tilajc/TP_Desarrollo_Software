@@ -1,0 +1,38 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  getHints,
+  createHint,
+  updateHint,
+  deleteHint,
+} from '../services/hints';
+
+export const useHints = () => {
+  return useQuery({
+    queryKey: ['hints'],
+    queryFn: getHints,
+  });
+};
+
+export const useCreateHint = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createHint,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['hints'] }),
+  });
+};
+
+export const useUpdateHint = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }) => updateHint(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['hints'] }),
+  });
+};
+
+export const useDeleteHint = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteHint,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['hints'] }),
+  });
+};

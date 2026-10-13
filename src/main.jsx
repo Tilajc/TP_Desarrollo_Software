@@ -10,6 +10,8 @@ import Notes from './pages/Notes.jsx';
 import Subjects from './pages/Admin/Subjects.jsx';
 import Students from './pages/Students.jsx';
 import Summaries from './pages/Summaries.jsx';
+import Users from './pages/Users.jsx';
+import Hints from './pages/Hints.jsx';
 import Topics from './pages/Admin/Topics.jsx';
 import TopicCards from './pages/Admin/TopicCards.jsx';
 
@@ -33,6 +35,10 @@ const router = createBrowserRouter([
         element: <Topics />,
       },
       {
+        path: '/materias/:subjectId/temas/:topicId/tarjetas',
+        element: <TopicCards />,
+      },
+      {
         path: '/apuntes',
         element: <Notes />,
       },
@@ -49,8 +55,12 @@ const router = createBrowserRouter([
         element: <Summaries />,
       },
       {
-        path: '/materias/:subjectId/temas/:topicId/tarjetas',
-        element: <TopicCards />,
+        path: '/usuario',
+        element: <Users />,
+      },
+      {
+        path: '/hints',
+        element: <Hints />,
       },
     ],
   },
