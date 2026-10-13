@@ -4,19 +4,18 @@ import {
   useCreateUser,
   useUpdateUser,
   useDeleteUser,
-} from '../hooks/useUsers';
-import FormModal from '../components/FormModal';
+} from '../../hooks/useUsers';
+import FormModal from '../../components/FormModal';
 import { Button } from '@/components/ui/button';
+import { Pencil, X } from 'lucide-react';
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
-  CardFooter,
 } from '@/components/ui/card';
 import GetSkeleton from '@/components/GetSkeleton';
 
-// Función que define los campos: hace la contraseña opcional si se está editando
 const getFields = (isEditing) => [
   {
     name: 'name',
@@ -98,7 +97,6 @@ const Users = () => {
     };
 
     if (selectedUser) {
-      // Si la contraseña quedó vacía al editar, la quitamos para no sobrescribir la actual
       if (!payload.password) {
         delete payload.password;
       }
@@ -142,7 +140,28 @@ const Users = () => {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {users?.map((user) => (
-              <Card key={user.id} className="flex flex-col justify-between">
+              <Card
+                key={user.id}
+                className="flex flex-col justify-between relative"
+              >
+                <div className="absolute right-0 top-0 z-10 flex gap-2 p-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleOpenEdit(user)}
+                    className="cursor-pointer"
+                  >
+                    <Pencil />
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleOpenDelete(user)}
+                    className="cursor-pointer"
+                  >
+                    <X />
+                  </Button>
+                </div>
                 <CardHeader>
                   <CardTitle>
                     {user.name} {user.lastName}
@@ -151,29 +170,10 @@ const Users = () => {
                     {user.role || 'Sin rol asignado'} - Legajo: {user.docket}
                   </CardDescription>
                 </CardHeader>
-                <CardFooter className="flex justify-end gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleOpenEdit(user)}
-                    className="cursor-pointer"
-                  >
-                    Editar
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleOpenDelete(user)}
-                    className="cursor-pointer"
-                  >
-                    Eliminar
-                  </Button>
-                </CardFooter>
               </Card>
             ))}
           </div>
 
-          {/* Modal de Crear / Editar */}
           <FormModal
             key={selectedUser ? `edit-${selectedUser.id}` : 'create-user'}
             open={isModalOpen}
