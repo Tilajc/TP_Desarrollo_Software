@@ -10,6 +10,8 @@ import Notes from './pages/Notes.jsx';
 import Cards from './pages/Cards.jsx';
 import Students from './pages/Students.jsx';
 import Summaries from './pages/Summaries.jsx';
+import Users from './pages/Users.jsx';
+import Hints from './pages/Hints.jsx';
 
 const queryClient = new QueryClient();
 
@@ -41,6 +43,14 @@ const router = createBrowserRouter([
       {
         path: '/resumen',
         element: <Summaries />,
+      },
+      {
+        path: '/usuario',
+        element: <Users />,
+      },
+      {
+        path: '/hints',
+        element: <Hints />,
       },
     ],
   },
