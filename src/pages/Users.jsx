@@ -16,7 +16,8 @@ import {
 } from '@/components/ui/card';
 import GetSkeleton from '@/components/GetSkeleton';
 
-const USER_FIELDS = [
+// Función que define los campos: hace la contraseña opcional si se está editando
+const getFields = (isEditing) => [
   {
     name: 'name',
     label: 'Nombre del Usuario',
@@ -32,26 +33,36 @@ const USER_FIELDS = [
   {
     name: 'email',
     label: 'Email',
+    type: 'email',
     placeholder: 'pepe@garcia.com',
     required: true,
   },
   {
     name: 'password',
-    label: 'Contraseña',
-    placeholder: '',
-    required: true,
+    label: isEditing ? 'Nueva contraseña (opcional)' : 'Contraseña',
+    type: 'password',
+    placeholder: isEditing
+      ? 'Dejar en blanco para mantener la actual'
+      : '********',
+    required: !isEditing, // Obligatoria solo al crear, opcional al editar
   },
   {
     name: 'docket',
     label: 'Numero de Legajo',
     placeholder: 'Ej: 44094',
+    type: 'text',
     required: true,
   },
   {
     name: 'role',
     label: 'Rol',
-    placeholder: 'Ej: ADMIN',
-    required: false,
+    type: 'select',
+    options: [
+      { label: 'Alumno', value: 'STUDENT' },
+      { label: 'Profesor', value: 'TEACHER' },
+      { label: 'Administrador', value: 'ADMIN' },
+    ],
+    required: true,
   },
 ];
 
@@ -81,13 +92,23 @@ const Users = () => {
   };
 
   const handleSubmit = (formData) => {
+    const payload = {
+      ...formData,
+      docket: formData.docket ? String(formData.docket) : '',
+    };
+
     if (selectedUser) {
+      // Si la contraseña quedó vacía al editar, la quitamos para no sobrescribir la actual
+      if (!payload.password) {
+        delete payload.password;
+      }
+
       updateMutation.mutate(
-        { id: selectedUser.id, data: formData },
+        { id: selectedUser.id, data: payload },
         { onSuccess: () => setIsModalOpen(false) }
       );
     } else {
-      createMutation.mutate(formData, {
+      createMutation.mutate(payload, {
         onSuccess: () => setIsModalOpen(false),
       });
     }
@@ -101,7 +122,7 @@ const Users = () => {
   };
 
   if (isError)
-    return <p className="p-4 text-red-500">Error al cargar las usuarios.</p>;
+    return <p className="p-4 text-red-500">Error al cargar los usuarios.</p>;
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
@@ -127,7 +148,7 @@ const Users = () => {
                     {user.name} {user.lastName}
                   </CardTitle>
                   <CardDescription>
-                    {user.role || 'Sin descripción'}
+                    {user.role || 'Sin rol asignado'} - Legajo: {user.docket}
                   </CardDescription>
                 </CardHeader>
                 <CardFooter className="flex justify-end gap-2">
@@ -152,22 +173,24 @@ const Users = () => {
             ))}
           </div>
 
+          {/* Modal de Crear / Editar */}
           <FormModal
             key={selectedUser ? `edit-${selectedUser.id}` : 'create-user'}
             open={isModalOpen}
             onOpenChange={setIsModalOpen}
             title={selectedUser ? 'Editar Usuario' : 'Nuevo Usuario'}
-            fields={USER_FIELDS}
+            fields={getFields(Boolean(selectedUser))}
             initialData={selectedUser}
             onSubmit={handleSubmit}
             isLoading={createMutation.isPending || updateMutation.isPending}
           />
 
+          {/* Modal de Confirmación de Eliminación */}
           <FormModal
             key={selectedUser ? `delete-${selectedUser.id}` : 'delete-user'}
             open={isDeleteModalOpen}
             onOpenChange={setIsDeleteModalOpen}
-            title={`¿Deseas eliminar la usuario "${selectedUser?.name}"?`}
+            title={`¿Deseas eliminar al usuario "${selectedUser?.name}"?`}
             fields={[]}
             onSubmit={handleDeleteSubmit}
             isLoading={deleteMutation.isPending}
