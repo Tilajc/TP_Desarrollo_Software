@@ -1,11 +1,13 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Pencil, X, ListTree } from 'lucide-react';
 import {
   useSubjects,
   useCreateSubject,
   useUpdateSubject,
   useDeleteSubject,
-} from '../hooks/useSubjects';
-import FormModal from '../components/FormModal';
+} from '../../hooks/useSubjects';
+import FormModal from '../../components/FormModal';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -36,6 +38,8 @@ const Subjects = () => {
   const createMutation = useCreateSubject();
   const updateMutation = useUpdateSubject();
   const deleteMutation = useDeleteSubject();
+
+  const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -97,21 +101,18 @@ const Subjects = () => {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {subjects?.map((subject) => (
-              <Card key={subject.id} className="flex flex-col justify-between">
-                <CardHeader>
-                  <CardTitle>{subject.name}</CardTitle>
-                  <CardDescription>
-                    {subject.description || 'Sin descripción'}
-                  </CardDescription>
-                </CardHeader>
-                <CardFooter className="flex justify-end gap-2">
+              <Card
+                key={subject.id}
+                className="flex flex-col justify-between relative"
+              >
+                <div className="absolute right-0 top-0 z-10 flex gap-2 p-2">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => handleOpenEdit(subject)}
                     className="cursor-pointer"
                   >
-                    Editar
+                    <Pencil />
                   </Button>
                   <Button
                     variant="destructive"
@@ -119,7 +120,23 @@ const Subjects = () => {
                     onClick={() => handleOpenDelete(subject)}
                     className="cursor-pointer"
                   >
-                    Eliminar
+                    <X />
+                  </Button>
+                </div>
+                <CardHeader>
+                  <CardTitle className="mr-10">{subject.name}</CardTitle>
+                  <CardDescription>
+                    {subject.description || 'Sin descripción'}
+                  </CardDescription>
+                </CardHeader>
+                <CardFooter className="flex justify-between items-center">
+                  <Button
+                    size="sm"
+                    onClick={() => navigate(`/materias/${subject.id}/temas`)}
+                    className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
+                  >
+                    <ListTree />
+                    Temas
                   </Button>
                 </CardFooter>
               </Card>
