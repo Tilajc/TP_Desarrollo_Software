@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Sidebar,
   SidebarContent,
@@ -6,13 +7,25 @@ import {
   SidebarHeader,
 } from '@/components/ui/sidebar';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const AppSidebar = () => {
+  const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem('token')
+  );
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsAuthenticated(false);
+    navigate('/');
+  };
+
   return (
     <Sidebar>
       <SidebarHeader className="w-64 bg-slate-900 border-r border-slate-800" />
       <SidebarContent className="w-64 bg-slate-900 border-r border-slate-800">
-        <nav className="p-4">
+        <nav className="flex flex-col justify-between p-4 h-full">
           <ul className="flex flex-col gap-2">
             <li className="mb-4">
               <Link
@@ -24,7 +37,7 @@ const AppSidebar = () => {
             </li>
             <li className="mb-4">
               <Link
-                to="/materias"
+                to="/subjects"
                 className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
               >
                 Materias
@@ -32,7 +45,7 @@ const AppSidebar = () => {
             </li>
             <li className="mb-4">
               <Link
-                to="/apuntes"
+                to="/notes"
                 className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
               >
                 Apuntes
@@ -40,7 +53,7 @@ const AppSidebar = () => {
             </li>
             <li className="mb-4">
               <Link
-                to="/tarjetas"
+                to="/cards"
                 className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
               >
                 Tarjetas
@@ -48,7 +61,7 @@ const AppSidebar = () => {
             </li>
             <li className="mb-4">
               <Link
-                to="/alumnos"
+                to="/students"
                 className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
               >
                 Alumnos
@@ -56,7 +69,7 @@ const AppSidebar = () => {
             </li>
             <li className="mb-4">
               <Link
-                to="/resumenes"
+                to="/summaries"
                 className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
               >
                 Resumen
@@ -64,13 +77,32 @@ const AppSidebar = () => {
             </li>
             <li className="mb-4">
               <Link
-                to="/usuarios"
+                to="/users"
                 className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
               >
                 Usuarios
               </Link>
             </li>
           </ul>
+          {isAuthenticated ? (
+            <Link
+              className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
+              onClick={handleLogout}
+            >
+              Cerrar Sesión
+            </Link>
+          ) : (
+            <Link
+              to="/login"
+              className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
+              onClick={() => {
+                localStorage.removeItem('token');
+                setIsAuthenticated(false);
+              }}
+            >
+              Iniciar Sesión
+            </Link>
+          )}
         </nav>
       </SidebarContent>
       <SidebarFooter className="w-64 bg-slate-900 border-r border-slate-800" />

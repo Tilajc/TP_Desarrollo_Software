@@ -43,7 +43,7 @@ const getFields = (isEditing) => [
     placeholder: isEditing
       ? 'Dejar en blanco para mantener la actual'
       : '********',
-    required: !isEditing, // Obligatoria solo al crear, opcional al editar
+    required: !isEditing,
   },
   {
     name: 'docket',

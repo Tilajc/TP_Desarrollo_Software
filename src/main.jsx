@@ -14,6 +14,8 @@ import Users from './pages/Admin/Users.jsx';
 import Hints from './pages/Hints.jsx';
 import Topics from './pages/Admin/Topics.jsx';
 import TopicCards from './pages/Admin/TopicCards.jsx';
+import Login from './pages/Login.jsx';
+import Signup from './pages/Signup.jsx';
 
 const queryClient = new QueryClient();
 
@@ -27,40 +29,48 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: '/materias',
+        path: '/subjects',
         element: <Subjects />,
       },
       {
-        path: '/materias/:subjectId/temas',
+        path: '/subjects/:subjectId/topics',
         element: <Topics />,
       },
       {
-        path: '/materias/:subjectId/temas/:topicId/tarjetas',
+        path: '/subjects/:subjectId/topics/:topicId/cards',
         element: <TopicCards />,
       },
       {
-        path: '/apuntes',
+        path: '/notes',
         element: <Notes />,
       },
       {
-        path: '/tarjetas',
+        path: '/cards',
         element: <Cards />,
       },
       {
-        path: '/alumnos',
+        path: '/students',
         element: <Students />,
       },
       {
-        path: '/resumenes',
+        path: '/summaries',
         element: <Summaries />,
       },
       {
-        path: '/usuarios',
+        path: '/users',
         element: <Users />,
       },
       {
         path: '/hints',
         element: <Hints />,
+      },
+      {
+        path: '/login',
+        element: <Login />,
+      },
+      {
+        path: '/register',
+        element: <Signup />,
       },
     ],
   },
