@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Mail, Lock, User, Hash } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useCreateUser } from '@/hooks/useUsers';
+import { useRegister } from '@/hooks/useUsers';
 import { useLogin } from '@/hooks/useAuth';
 
 const Signup = () => {
-  const createUserMutation = useCreateUser();
+  const registerMutation = useRegister();
   const loginMutation = useLogin();
 
   const [formData, setFormData] = useState({
@@ -14,7 +14,6 @@ const Signup = () => {
     email: '',
     password: '',
     docket: '',
-    role: 'STUDENT',
   });
 
   const handleChange = (e) => {
@@ -28,7 +27,7 @@ const Signup = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    createUserMutation.mutate(formData, {
+    registerMutation.mutate(formData, {
       onSuccess: () => {
         loginMutation.mutate(
           { email: formData.email, password: formData.password },
@@ -43,8 +42,8 @@ const Signup = () => {
     });
   };
 
-  const isLoading = createUserMutation.isPending || loginMutation.isPending;
-  const currentError = createUserMutation.error || loginMutation.error;
+  const isLoading = registerMutation.isPending || loginMutation.isPending;
+  const currentError = registerMutation.error || loginMutation.error;
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
