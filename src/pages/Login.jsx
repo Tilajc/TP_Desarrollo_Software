@@ -2,11 +2,15 @@ import { useState } from 'react';
 import { Mail, Lock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLogin } from '@/hooks/useAuth';
+import useLoginStatus from '../store/useLoginStatus';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const loginMutation = useLogin();
+  const { login } = useLoginStatus();
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -15,7 +19,8 @@ const Login = () => {
       { email, password },
       {
         onSuccess: () => {
-          window.location.href = '/';
+          login();
+          navigate('/');
         },
       }
     );

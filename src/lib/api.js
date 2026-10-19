@@ -14,7 +14,7 @@ const apiFetch = async (endpoint, options = {}) => {
 
   if (response.status === 401) {
     localStorage.removeItem('token');
-    return Promise.reject('Por favor, inicia sesión nuevamente.');
+    throw new Error('Por favor, inicia sesión nuevamente.');
   }
 
   if (!response.ok) {

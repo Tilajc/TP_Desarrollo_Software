@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Sidebar,
   SidebarContent,
@@ -8,16 +7,15 @@ import {
 } from '@/components/ui/sidebar';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import useLoginStatus from '../store/useLoginStatus';
 
 const AppSidebar = () => {
+  const { isLoggedIn, logout } = useLoginStatus();
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    !!localStorage.getItem('token')
-  );
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    setIsAuthenticated(false);
+    logout();
     navigate('/');
   };
 
@@ -84,7 +82,7 @@ const AppSidebar = () => {
               </Link>
             </li>
           </ul>
-          {isAuthenticated ? (
+          {isLoggedIn ? (
             <Link
               className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
               onClick={handleLogout}
@@ -97,7 +95,6 @@ const AppSidebar = () => {
               className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
               onClick={() => {
                 localStorage.removeItem('token');
-                setIsAuthenticated(false);
               }}
             >
               Iniciar Sesión

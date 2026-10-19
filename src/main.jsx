@@ -1,7 +1,12 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  QueryCache,
+} from '@tanstack/react-query';
+import useLoginStatus from './store/useLoginStatus';
 import './index.css';
 import Layout from './Layout';
 import Home from './pages/Home.jsx';
@@ -17,7 +22,16 @@ import TopicCards from './pages/Admin/TopicCards.jsx';
 import Login from './pages/Login.jsx';
 import Signup from './pages/Signup.jsx';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: (error) => {
+      if (error.message === 'Por favor, inicia sesión nuevamente.') {
+        localStorage.removeItem('token');
+        useLoginStatus.getState().logout();
+      }
+    },
+  }),
+});
 
 const router = createBrowserRouter([
   {
