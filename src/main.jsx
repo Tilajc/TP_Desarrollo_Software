@@ -1,7 +1,12 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  QueryCache,
+} from '@tanstack/react-query';
+import useLoginStatus from './store/useLoginStatus';
 import './index.css';
 import Layout from './Layout';
 import Home from './pages/Home.jsx';
@@ -10,13 +15,25 @@ import Notes from './pages/Notes.jsx';
 import Subjects from './pages/Admin/Subjects.jsx';
 import Students from './pages/Students.jsx';
 import Summaries from './pages/Summaries.jsx';
-import Users from './pages/Users.jsx';
+import Users from './pages/Admin/Users.jsx';
 import Hints from './pages/Hints.jsx';
 import Topics from './pages/Admin/Topics.jsx';
 import TopicCards from './pages/Admin/TopicCards.jsx';
 import ClassSubscriptions from './pages/Admin/ClassSubscriptions.jsx';
+import Login from './pages/Login.jsx';
+import Signup from './pages/Signup.jsx';
+import Courses from './pages/Admin/Courses.jsx';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: (error) => {
+      if (error.message === 'Por favor, inicia sesión nuevamente.') {
+        localStorage.removeItem('token');
+        useLoginStatus.getState().logout();
+      }
+    },
+  }),
+});
 
 const router = createBrowserRouter([
   {
@@ -28,15 +45,15 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: '/materias',
+        path: '/subjects',
         element: <Subjects />,
       },
       {
-        path: '/materias/:subjectId/temas',
+        path: '/subjects/:subjectId/topics',
         element: <Topics />,
       },
       {
-        path: '/materias/:subjectId/temas/:topicId/tarjetas',
+        path: '/subjects/:subjectId/topics/:topicId/cards',
         element: <TopicCards />,
       },
       // 👇 Agregamos la ruta anidada para resúmenes de un tema
@@ -45,23 +62,23 @@ const router = createBrowserRouter([
         element: <Summaries />,
       },
       {
-        path: '/apuntes',
+        path: '/notes',
         element: <Notes />,
       },
       {
-        path: '/tarjetas',
+        path: '/cards',
         element: <Cards />,
       },
       {
-        path: '/alumno',
+        path: '/students',
         element: <Students />,
       },
       {
-        path: '/resumen',
+        path: '/summaries',
         element: <Summaries />,
       },
       {
-        path: '/usuario',
+        path: '/users',
         element: <Users />,
       },
       {
@@ -75,6 +92,18 @@ const router = createBrowserRouter([
       {
         path: '/materias/:subjectId/temas/:topicId/estudiar',
         element: <Cards />,
+      }, 
+      {
+        path: '/login',
+        element: <Login />,
+      },
+      {
+        path: '/register',
+        element: <Signup />,
+      },
+      {
+        path: '/courses',
+        element: <Courses />,
       },
     ],
   },

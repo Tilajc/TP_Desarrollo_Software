@@ -27,3 +27,17 @@ export const deleteUser = async (id) => {
     method: 'DELETE',
   });
 };
+
+export const register = async (userData) => {
+  return apiFetch('/users/register', {
+    method: 'POST',
+    body: JSON.stringify(userData),
+  });
+};
+
+export const updateProfile = (userData) => {
+  return apiFetch(`/users/profile`, {
+    method: 'PUT',
+    body: JSON.stringify(userData),
+  });
+};

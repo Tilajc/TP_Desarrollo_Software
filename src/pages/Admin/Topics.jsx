@@ -80,7 +80,7 @@ const Topics = () => {
       <Button
         variant="ghost"
         size="sm"
-        onClick={() => navigate('/materias')}
+        onClick={() => navigate('/subjects')}
         className="cursor-pointer mb-4"
       >
         ← Volver a Materias
@@ -141,7 +141,7 @@ const Topics = () => {
                     size="sm"
                     onClick={() =>
                       navigate(
-                        `/materias/${subject.id}/temas/${topic.id}/resumenes`
+                        `/subjects/${subject.id}/topics/${topic.id}/summaries`
                       )
                     }
                     className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
@@ -153,7 +153,7 @@ const Topics = () => {
                     size="sm"
                     onClick={() =>
                       navigate(
-                        `/materias/${subject.id}/temas/${topic.id}/tarjetas`
+                        `/subjects/${subject.id}/topics/${topic.id}/cards`
                       )
                     }
                     className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"

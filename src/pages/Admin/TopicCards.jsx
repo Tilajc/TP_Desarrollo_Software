@@ -133,7 +133,7 @@ const TopicCards = () => {
       <Button
         variant="ghost"
         size="sm"
-        onClick={() => navigate(`/materias/${subjectId}/temas`)}
+        onClick={() => navigate(`/subjects/${subjectId}/topics`)}
         className="cursor-pointer mb-4"
       >
         ← Volver a Temas
