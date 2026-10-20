@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Pencil, X } from 'lucide-react';
+import { Pencil, X, Lightbulb } from 'lucide-react';
 import { useTopic } from '../../hooks/useTopics';
 import {
   useCards,
@@ -8,6 +8,7 @@ import {
   useUpdateCard,
   useDeleteCard,
 } from '../../hooks/useCards';
+import { useCreateHint, useHints } from '../../hooks/useHints';
 import FormModal from '../../components/FormModal';
 import { Button } from '@/components/ui/button';
 import {
@@ -33,6 +34,13 @@ const CARD_FIELDS = [
     required: true,
     type: 'textarea',
   },
+  {
+    name: 'hint',
+    label: 'Pista (opcional)',
+    placeholder: 'Ej: Pensar en la tasa de cambio instantánea',
+    required: false,
+    type: 'text',
+  },
 ];
 
 const TopicCards = () => {
@@ -41,9 +49,11 @@ const TopicCards = () => {
 
   const { data: topic } = useTopic(topicId);
   const { data: cards, isLoading, isError } = useCards(topicId);
+  const { data: hints } = useHints();
   const createMutation = useCreateCard();
   const updateMutation = useUpdateCard();
   const deleteMutation = useDeleteCard();
+  const createHintMutation = useCreateHint();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -55,7 +65,12 @@ const TopicCards = () => {
   };
 
   const handleOpenEdit = (card) => {
-    setSelectedCard(card);
+    // Si la tarjeta tiene pista asociada en la lista de hints, la pre-cargamos en el formulario
+    const cardHint = hints?.find((h) => h.cardId === card.id);
+    setSelectedCard({
+      ...card,
+      hint: cardHint ? cardHint.content : '',
+    });
     setIsModalOpen(true);
   };
 
@@ -65,15 +80,40 @@ const TopicCards = () => {
   };
 
   const handleSubmit = (formData) => {
+    const { hint, ...cardData } = formData;
+
     if (selectedCard) {
       updateMutation.mutate(
-        { id: selectedCard.id, data: formData },
-        { onSuccess: () => setIsModalOpen(false) }
+        { id: selectedCard.id, data: cardData },
+        {
+          onSuccess: () => {
+            // Si escribió pista al editar, la creamos o actualizamos
+            if (hint && hint.trim()) {
+              createHintMutation.mutate({
+                content: hint.trim(),
+                cardId: selectedCard.id,
+              });
+            }
+            setIsModalOpen(false);
+          },
+        }
       );
     } else {
       createMutation.mutate(
-        { ...formData, topicId: Number(topicId) },
-        { onSuccess: () => setIsModalOpen(false) }
+        { ...cardData, topicId: Number(topicId) },
+        {
+          onSuccess: (newCard) => {
+            // Si el usuario ingresó una pista al crear la tarjeta
+            const targetId = newCard?.id || newCard?.data?.id;
+            if (hint && hint.trim() && targetId) {
+              createHintMutation.mutate({
+                content: hint.trim(),
+                cardId: targetId,
+              });
+            }
+            setIsModalOpen(false);
+          },
+        }
       );
     }
   };
@@ -122,42 +162,55 @@ const TopicCards = () => {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {cards?.map((card) => (
-              <Card
-                key={card.id}
-                className="flex flex-col justify-between relative"
-              >
-                <div className="absolute right-0 top-0 z-10 flex gap-2 p-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleOpenEdit(card)}
-                    className="cursor-pointer"
-                    aria-label="Editar tarjeta"
-                    title="Editar tarjeta"
-                  >
-                    <Pencil />
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleOpenDelete(card)}
-                    className="cursor-pointer"
-                    aria-label="Eliminar tarjeta"
-                    title="Eliminar tarjeta"
-                  >
-                    <X />
-                  </Button>
-                </div>
+            {cards?.map((card) => {
+              const cardHint = hints?.find((h) => h.cardId === card.id);
 
-                <CardHeader>
-                  <CardTitle className="mr-20">{card.question}</CardTitle>
-                  <CardDescription className="line-clamp-3">
-                    {card.answer}
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            ))}
+              return (
+                <Card
+                  key={card.id}
+                  className="flex flex-col justify-between relative"
+                >
+                  <div className="absolute right-0 top-0 z-10 flex gap-2 p-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleOpenEdit(card)}
+                      className="cursor-pointer"
+                      aria-label="Editar tarjeta"
+                      title="Editar tarjeta"
+                    >
+                      <Pencil />
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleOpenDelete(card)}
+                      className="cursor-pointer"
+                      aria-label="Eliminar tarjeta"
+                      title="Eliminar tarjeta"
+                    >
+                      <X />
+                    </Button>
+                  </div>
+
+                  <CardHeader>
+                    <CardTitle className="mr-20">{card.question}</CardTitle>
+                    <CardDescription className="line-clamp-3">
+                      {card.answer}
+                    </CardDescription>
+
+                    {cardHint && (
+                      <div className="mt-3 flex items-center gap-1.5 text-xs text-amber-300/90 bg-amber-950/30 border border-amber-900/40 px-2.5 py-1.5 rounded-md">
+                        <Lightbulb className="w-3.5 h-3.5 shrink-0 text-amber-400" />
+                        <span className="truncate">
+                          <strong>Pista:</strong> {cardHint.content}
+                        </span>
+                      </div>
+                    )}
+                  </CardHeader>
+                </Card>
+              );
+            })}
           </div>
 
           <FormModal
@@ -168,7 +221,11 @@ const TopicCards = () => {
             fields={CARD_FIELDS}
             initialData={selectedCard}
             onSubmit={handleSubmit}
-            isLoading={createMutation.isPending || updateMutation.isPending}
+            isLoading={
+              createMutation.isPending ||
+              updateMutation.isPending ||
+              createHintMutation.isPending
+            }
           />
 
           <FormModal

@@ -19,6 +19,7 @@ import Users from './pages/Admin/Users.jsx';
 import Hints from './pages/Hints.jsx';
 import Topics from './pages/Admin/Topics.jsx';
 import TopicCards from './pages/Admin/TopicCards.jsx';
+import ClassSubscriptions from './pages/Admin/ClassSubscriptions.jsx';
 import Login from './pages/Login.jsx';
 import Signup from './pages/Signup.jsx';
 import Courses from './pages/Admin/Courses.jsx';
@@ -55,6 +56,11 @@ const router = createBrowserRouter([
         path: '/subjects/:subjectId/topics/:topicId/cards',
         element: <TopicCards />,
       },
+      // 👇 Agregamos la ruta anidada para resúmenes de un tema
+      {
+        path: '/materias/:subjectId/temas/:topicId/resumenes',
+        element: <Summaries />,
+      },
       {
         path: '/notes',
         element: <Notes />,
@@ -79,6 +85,14 @@ const router = createBrowserRouter([
         path: '/hints',
         element: <Hints />,
       },
+      {
+        path: '/inscripciones',
+        element: <ClassSubscriptions />,
+      },
+      {
+        path: '/materias/:subjectId/temas/:topicId/estudiar',
+        element: <Cards />,
+      }, 
       {
         path: '/login',
         element: <Login />,

@@ -104,12 +104,10 @@ const Hints = () => {
             {hints?.map((hint) => (
               <Card key={hint.id} className="flex flex-col justify-between">
                 <CardHeader>
-                  <CardTitle>
-                    {hint.name} {hint.lastName}
+                  <CardTitle className="text-base font-semibold">
+                    {hint.content}
                   </CardTitle>
-                  <CardDescription>
-                    {hint.role || 'Sin descripción'}
-                  </CardDescription>
+                  <CardDescription>Tarjeta ID: {hint.cardId}</CardDescription>
                 </CardHeader>
                 <CardFooter className="flex justify-end gap-2">
                   <Button
@@ -148,7 +146,7 @@ const Hints = () => {
             key={selectedHint ? `delete-${selectedHint.id}` : 'delete-hint'}
             open={isDeleteModalOpen}
             onOpenChange={setIsDeleteModalOpen}
-            title={`¿Deseas eliminar esta pista? "${selectedHint?.name}"?`}
+            title={`¿Deseas eliminar esta pista?`}
             fields={[]}
             onSubmit={handleDeleteSubmit}
             isLoading={deleteMutation.isPending}
