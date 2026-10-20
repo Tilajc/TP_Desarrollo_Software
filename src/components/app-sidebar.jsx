@@ -81,6 +81,14 @@ const AppSidebar = () => {
                 Usuarios
               </Link>
             </li>
+            <li className="mb-4">
+              <Link
+                to="/courses"
+                className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
+              >
+                Cursos
+              </Link>
+            </li>
           </ul>
           {isLoggedIn ? (
             <Link

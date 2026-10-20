@@ -10,6 +10,9 @@ const apiFetch = async (endpoint, options = {}) => {
     ...options,
   };
 
+  console.log('endpoint: ', endpoint);
+  console.log('options: ', options);
+
   const response = await fetch(`${BASE_URL}${endpoint}`, config);
 
   if (response.status === 401) {

@@ -21,6 +21,7 @@ import Topics from './pages/Admin/Topics.jsx';
 import TopicCards from './pages/Admin/TopicCards.jsx';
 import Login from './pages/Login.jsx';
 import Signup from './pages/Signup.jsx';
+import Courses from './pages/Admin/Courses.jsx';
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -85,6 +86,10 @@ const router = createBrowserRouter([
       {
         path: '/register',
         element: <Signup />,
+      },
+      {
+        path: '/courses',
+        element: <Courses />,
       },
     ],
   },
