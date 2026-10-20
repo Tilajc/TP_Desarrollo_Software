@@ -106,8 +106,6 @@ const Courses = () => {
   if (isError)
     return <p className="p-4 text-red-500">Error al cargar los cursos.</p>;
 
-  console.log('courses: ', courses);
-
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <div className="flex justify-between items-center mb-6">
