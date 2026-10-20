@@ -6,12 +6,12 @@ import {
   deleteHint,
 } from '../services/hints';
 
-export const useHints = () => {
+export const useHints = (cardId) => {
   const token = localStorage.getItem('token');
 
   return useQuery({
-    queryKey: ['hints'],
-    queryFn: getHints,
+    queryKey: ['hints', cardId],
+    queryFn: () => getHints(cardId),
     enabled: !!token,
     retry: false,
   });
