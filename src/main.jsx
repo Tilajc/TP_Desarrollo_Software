@@ -72,7 +72,7 @@ const router = createBrowserRouter([
         element: <Students />,
       },
       {
-        path: '/summaries',
+        path: '/subjects/:subjectId/topics/:topicId/summaries',
         element: <Summaries />,
       },
       {
@@ -82,10 +82,6 @@ const router = createBrowserRouter([
       {
         path: '/hints',
         element: <Hints />,
-      },
-      {
-        path: '/subject/:subjectId/topic/:topicId/cards',
-        element: <Cards />,
       },
       {
         path: '/login',
