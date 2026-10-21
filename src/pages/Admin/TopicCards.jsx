@@ -200,7 +200,7 @@ const TopicCards = () => {
                     </CardDescription>
 
                     {cardHint && (
-                      <div className="mt-3 flex items-center gap-1.5 text-xs text-amber-300/90 bg-amber-950/30 border border-amber-900/40 px-2.5 py-1.5 rounded-md">
+                      <div className="mt-3 flex items-center gap-1.5 text-xs text-grey-300/90 bg-amber-950/30 border border-amber-900/40 px-2.5 py-1.5 rounded-md">
                         <Lightbulb className="w-3.5 h-3.5 shrink-0 text-amber-400" />
                         <span className="truncate">
                           <strong>Pista:</strong> {cardHint.content}

@@ -163,11 +163,13 @@ const Courses = () => {
                 <CardFooter className="flex justify-between items-center">
                   <Button
                     size="sm"
-                    onClick={() => navigate(`/courses/${course.id}/topics`)}
+                    onClick={() =>
+                      navigate(`/courses/${course.id}/subscriptions`)
+                    }
                     className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
                   >
                     <ListTree />
-                    Temas
+                    Subscripciones
                   </Button>
                 </CardFooter>
               </Card>
