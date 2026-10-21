@@ -132,7 +132,7 @@ const Subjects = () => {
                 <CardFooter className="flex justify-between items-center">
                   <Button
                     size="sm"
-                    onClick={() => navigate(`/materias/${subject.id}/temas`)}
+                    onClick={() => navigate(`/subjects/${subject.id}/topics`)}
                     className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
                   >
                     <ListTree />
