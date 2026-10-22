@@ -25,18 +25,11 @@ const SUBSCRIPTION_FIELDS = [
     required: true,
   },
   {
-    name: 'studentId',
-    label: 'ID del Alumno (Student)',
-    placeholder: 'Ej: 11',
+    name: 'subscriberId',
+    label: 'ID del Suscriptor (User)',
+    placeholder: 'Vacío = el usuario logueado',
     type: 'number',
-    required: true,
-  },
-  {
-    name: 'status',
-    label: 'Estado de Inscripción',
-    placeholder: 'CURSANDO',
-    type: 'text',
-    required: true,
+    required: false,
   },
 ];
 
@@ -67,9 +60,10 @@ const CourseSubscriptions = () => {
 
   const handleSubmit = (formData) => {
     const payload = {
-      ...formData,
       courseId: Number(formData.courseId),
-      studentId: Number(formData.studentId),
+      ...(formData.subscriberId && {
+        subscriberId: Number(formData.subscriberId),
+      }),
     };
 
     if (selectedSub) {
@@ -94,7 +88,7 @@ const CourseSubscriptions = () => {
   if (isError) {
     return (
       <p className="p-4 text-red-500">
-        Error al cargar las inscripciones a cursos.
+        Error al cargar las suscripciones a cursos.
       </p>
     );
   }
@@ -105,17 +99,17 @@ const CourseSubscriptions = () => {
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <GraduationCap className="w-8 h-8 text-indigo-400" />
-            Inscripciones a Cursos
+            Suscripciones a Cursos
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Gestión de suscripciones de alumnos por curso
+            Gestión de suscripciones de usuarios por curso
           </p>
         </div>
         <Button
           onClick={handleOpenCreate}
           className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
         >
-          + Inscribir Alumno
+          + Nueva Suscripción
         </Button>
       </div>
 
@@ -125,7 +119,7 @@ const CourseSubscriptions = () => {
         <>
           {subscriptions?.length === 0 && (
             <p className="text-slate-400">
-              No hay inscripciones registradas todavía.
+              No hay suscripciones registradas todavía.
             </p>
           )}
 
@@ -141,7 +135,7 @@ const CourseSubscriptions = () => {
                     size="sm"
                     onClick={() => handleOpenEdit(sub)}
                     className="cursor-pointer"
-                    aria-label="Editar inscripción"
+                    aria-label="Editar suscripción"
                   >
                     <Pencil className="w-4 h-4" />
                   </Button>
@@ -150,7 +144,7 @@ const CourseSubscriptions = () => {
                     size="sm"
                     onClick={() => handleOpenDelete(sub)}
                     className="cursor-pointer"
-                    aria-label="Eliminar inscripción"
+                    aria-label="Eliminar suscripción"
                   >
                     <X className="w-4 h-4" />
                   </Button>
@@ -158,20 +152,15 @@ const CourseSubscriptions = () => {
 
                 <CardHeader>
                   <CardTitle className="text-base font-semibold mr-16">
-                    Inscripción #{sub.id}
+                    Suscripción #{sub.id}
                   </CardTitle>
                   <CardDescription className="space-y-1 mt-2 text-xs text-slate-300">
                     <p>
-                      <strong>ID Curso:</strong> {sub.courseId || sub.classId}
+                      <strong>ID Curso:</strong> {sub.courseId}
                     </p>
                     <p>
-                      <strong>ID Alumno:</strong> {sub.studentId}
+                      <strong>ID Suscriptor:</strong> {sub.subscriberId}
                     </p>
-                    <div className="pt-2">
-                      <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-800/60">
-                        {sub.status || 'CURSANDO'}
-                      </span>
-                    </div>
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -183,7 +172,7 @@ const CourseSubscriptions = () => {
             open={isModalOpen}
             onOpenChange={setIsModalOpen}
             title={
-              selectedSub ? 'Editar Inscripción' : 'Nueva Inscripción a Curso'
+              selectedSub ? 'Editar Suscripción' : 'Nueva Suscripción a Curso'
             }
             fields={SUBSCRIPTION_FIELDS}
             initialData={selectedSub}
@@ -197,7 +186,7 @@ const CourseSubscriptions = () => {
             }
             open={isDeleteModalOpen}
             onOpenChange={setIsDeleteModalOpen}
-            title={`¿Deseas dar de baja la inscripción #${selectedSub?.id}?`}
+            title={`¿Deseas dar de baja la suscripción #${selectedSub?.id}?`}
             fields={[]}
             onSubmit={handleDeleteSubmit}
             isLoading={deleteMutation.isPending}

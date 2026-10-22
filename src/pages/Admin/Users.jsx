@@ -46,19 +46,11 @@ const getFields = (isEditing) => [
     required: !isEditing,
   },
   {
-    name: 'docket',
-    label: 'Numero de Legajo',
-    placeholder: 'Ej: 44094',
-    type: 'text',
-    required: true,
-  },
-  {
     name: 'role',
     label: 'Rol',
     type: 'select',
     options: [
-      { label: 'Alumno', value: 'STUDENT' },
-      { label: 'Profesor', value: 'TEACHER' },
+      { label: 'Usuario', value: 'USER' },
       { label: 'Administrador', value: 'ADMIN' },
     ],
     required: true,
@@ -93,7 +85,6 @@ const Users = () => {
   const handleSubmit = (formData) => {
     const payload = {
       ...formData,
-      docket: formData.docket ? String(formData.docket) : '',
     };
 
     if (selectedUser) {
@@ -167,7 +158,7 @@ const Users = () => {
                     {user.name} {user.lastName}
                   </CardTitle>
                   <CardDescription>
-                    {user.role || 'Sin rol asignado'} - Legajo: {user.docket}
+                    {user.role || 'Sin rol asignado'}
                   </CardDescription>
                 </CardHeader>
               </Card>
