@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useTopic } from '../hooks/useTopics';
 import {
   useSummaries,
   useCreateSummary,
@@ -30,17 +32,14 @@ const SUMMARY_FIELDS = [
     type: 'textarea',
     required: true,
   },
-  {
-    name: 'topicId',
-    label: 'ID del Tema (Topic)',
-    placeholder: 'Ej: 2',
-    type: 'number',
-    required: true,
-  },
 ];
 
 const Summaries = () => {
-  const { data: summaries, isLoading, isError } = useSummaries();
+  const { subjectId, topicId } = useParams();
+  const navigate = useNavigate();
+
+  const { data: topic } = useTopic(topicId);
+  const { data: summaries, isLoading, isError } = useSummaries(topicId);
   const createMutation = useCreateSummary();
   const updateMutation = useUpdateSummary();
   const deleteMutation = useDeleteSummary();
@@ -67,7 +66,7 @@ const Summaries = () => {
   const handleSubmit = (formData) => {
     const payload = {
       ...formData,
-      topicId: Number(formData.topicId),
+      topicId: Number(topicId || formData.topicId),
     };
 
     if (selectedSummary) {
@@ -94,8 +93,20 @@ const Summaries = () => {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
+      {/* Botón idéntico al de TopicCards */}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => navigate(`/subjects/${subjectId}/topics`)}
+        className="cursor-pointer mb-4"
+      >
+        ← Volver a Temas
+      </Button>
+
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Resúmenes</h1>
+        <h1 className="text-3xl font-bold">
+          Resúmenes{topic ? ` de ${topic.name}` : ''}
+        </h1>
         <Button
           onClick={handleOpenCreate}
           className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
@@ -108,6 +119,12 @@ const Summaries = () => {
         <GetSkeleton />
       ) : (
         <>
+          {summaries?.length === 0 && (
+            <p className="text-slate-400">
+              Este tema todavía no tiene resúmenes.
+            </p>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {summaries?.map((summary) => (
               <Card key={summary.id} className="flex flex-col justify-between">
@@ -115,12 +132,9 @@ const Summaries = () => {
                   <CardTitle className="text-lg font-semibold">
                     {summary.title}
                   </CardTitle>
-                  <CardDescription className="line-clamp-3 text-slate-300">
+                  <CardDescription className="text-slate-300">
                     {summary.content}
                   </CardDescription>
-                  <span className="text-xs text-slate-500 mt-2 block">
-                    Tema ID: {summary.topicId}
-                  </span>
                 </CardHeader>
                 <CardFooter className="flex justify-end gap-2">
                   <Button

@@ -65,7 +65,6 @@ const TopicCards = () => {
   };
 
   const handleOpenEdit = (card) => {
-    // Si la tarjeta tiene pista asociada en la lista de hints, la pre-cargamos en el formulario
     const cardHint = hints?.find((h) => h.cardId === card.id);
     setSelectedCard({
       ...card,
@@ -87,7 +86,6 @@ const TopicCards = () => {
         { id: selectedCard.id, data: cardData },
         {
           onSuccess: () => {
-            // Si escribió pista al editar, la creamos o actualizamos
             if (hint && hint.trim()) {
               createHintMutation.mutate({
                 content: hint.trim(),
@@ -103,7 +101,6 @@ const TopicCards = () => {
         { ...cardData, topicId: Number(topicId) },
         {
           onSuccess: (newCard) => {
-            // Si el usuario ingresó una pista al crear la tarjeta
             const targetId = newCard?.id || newCard?.data?.id;
             if (hint && hint.trim() && targetId) {
               createHintMutation.mutate({
@@ -168,7 +165,7 @@ const TopicCards = () => {
               return (
                 <Card
                   key={card.id}
-                  className="flex flex-col justify-between relative"
+                  className="flex flex-col justify-between relative h-auto min-h-[190px]"
                 >
                   <div className="absolute right-0 top-0 z-10 flex gap-2 p-2">
                     <Button
@@ -179,7 +176,7 @@ const TopicCards = () => {
                       aria-label="Editar tarjeta"
                       title="Editar tarjeta"
                     >
-                      <Pencil />
+                      <Pencil className="w-4 h-4" />
                     </Button>
                     <Button
                       variant="destructive"
@@ -189,22 +186,31 @@ const TopicCards = () => {
                       aria-label="Eliminar tarjeta"
                       title="Eliminar tarjeta"
                     >
-                      <X />
+                      <X className="w-4 h-4" />
                     </Button>
                   </div>
 
-                  <CardHeader>
-                    <CardTitle className="mr-20">{card.question}</CardTitle>
-                    <CardDescription className="line-clamp-3">
-                      {card.answer}
-                    </CardDescription>
+                  <CardHeader className="p-5 flex-1 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <CardTitle className="mr-20 text-lg font-bold leading-snug break-words">
+                        {card.question}
+                      </CardTitle>
+
+                      {/* Sin line-clamp: el texto se acomoda y expande la tarjeta hacia abajo */}
+                      <CardDescription className="text-sm leading-relaxed break-words whitespace-normal text-slate-600 dark:text-slate-300">
+                        {card.answer}
+                      </CardDescription>
+                    </div>
 
                     {cardHint && (
-                      <div className="mt-3 flex items-center gap-1.5 text-xs text-grey-300/90 bg-amber-950/30 border border-amber-900/40 px-2.5 py-1.5 rounded-md">
-                        <Lightbulb className="w-3.5 h-3.5 shrink-0 text-amber-400" />
-                        <span className="truncate">
-                          <strong>Pista:</strong> {cardHint.content}
-                        </span>
+                      <div className="mt-4 flex items-start gap-2 text-xs bg-sky-50 border border-sky-200 text-sky-900 px-3 py-2.5 rounded-lg">
+                        <Lightbulb className="w-4 h-4 shrink-0 text-sky-600 mt-0.5" />
+                        <div className="leading-relaxed break-words whitespace-normal">
+                          <strong className="font-semibold text-sky-950 mr-1">
+                            Pista:
+                          </strong>
+                          {cardHint.content}
+                        </div>
                       </div>
                     )}
                   </CardHeader>
