@@ -19,11 +19,14 @@ import {
 import GetSkeleton from '@/components/GetSkeleton';
 import { useUsers } from '@/hooks/useUsers';
 import { useSubjects } from '@/hooks/useSubjects';
+import { useGetMe } from '@/hooks/useAuth';
 
 const Courses = () => {
   const { data: courses, isLoading, isError } = useCourses();
   const { data: users } = useUsers();
   const { data: subjects } = useSubjects();
+  const { data: me } = useGetMe();
+  const isAdmin = me?.role === 'ADMIN';
 
   const createMutation = useCreateCourse();
   const updateMutation = useUpdateCourse();
@@ -37,23 +40,22 @@ const Courses = () => {
 
   const courseFields = useMemo(() => {
     return [
-      {
-        name: 'year',
-        label: 'Año del curso',
-        placeholder: 'Ej: 2023',
-        required: true,
-      },
-      {
-        name: 'teacherId',
-        label: 'Autor',
-        type: 'select',
-        required: true,
-        options:
-          users?.map((user) => ({
-            value: user.id,
-            label: `${user.name} ${user.lastName}`,
-          })) || [],
-      },
+      // Solo el admin puede elegir el autor; para el resto el autor es el usuario logueado
+      ...(isAdmin
+        ? [
+            {
+              name: 'authorId',
+              label: 'Autor',
+              type: 'select',
+              required: true,
+              options:
+                users?.map((user) => ({
+                  value: user.id,
+                  label: `${user.name} ${user.lastName}`,
+                })) || [],
+            },
+          ]
+        : []),
       {
         name: 'subjectId',
         label: 'Materia (Subject)',
@@ -66,7 +68,7 @@ const Courses = () => {
           })) || [],
       },
     ];
-  }, [users, subjects]);
+  }, [isAdmin, users, subjects]);
 
   const handleOpenCreate = () => {
     setSelectedCourse(null);
@@ -148,14 +150,13 @@ const Courses = () => {
                 </div>
                 <CardHeader>
                   <CardTitle className="mr-10">
-                    {course.subject.name || `Curso ${course.year}`}
+                    {course.subject?.name || `Curso ${course.id}`}
                   </CardTitle>
                   <CardDescription>
-                    <span className="block">Año: {course.year}</span>
                     <span className="block">
                       Autor:{' '}
-                      {course.teacher
-                        ? `${course.teacher.name} ${course.teacher.lastName}`
+                      {course.author
+                        ? `${course.author.name} ${course.author.lastName}`
                         : 'No asignado'}
                     </span>
                   </CardDescription>
@@ -163,11 +164,13 @@ const Courses = () => {
                 <CardFooter className="flex justify-between items-center">
                   <Button
                     size="sm"
-                    onClick={() => navigate(`/courses/${course.id}/topics`)}
+                    onClick={() =>
+                      navigate(`/courses/${course.id}/subscriptions`)
+                    }
                     className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
                   >
                     <ListTree />
-                    Temas
+                    Subscripciones
                   </Button>
                 </CardFooter>
               </Card>
@@ -191,7 +194,7 @@ const Courses = () => {
             }
             open={isDeleteModalOpen}
             onOpenChange={setIsDeleteModalOpen}
-            title={`¿Deseas eliminar el curso "${selectedCourse?.name || selectedCourse?.year}"?`}
+            title={`¿Deseas eliminar el curso "${selectedCourse?.subject?.name}"?`}
             fields={[]}
             onSubmit={handleDeleteSubmit}
             isLoading={deleteMutation.isPending}

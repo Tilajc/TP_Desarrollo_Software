@@ -1,3 +1,4 @@
+import useLoginStatus from '../store/useLoginStatus';
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 const apiFetch = async (endpoint, options = {}) => {
@@ -14,7 +15,7 @@ const apiFetch = async (endpoint, options = {}) => {
 
   if (response.status === 401) {
     localStorage.removeItem('token');
-    throw new Error('Por favor, inicia sesión nuevamente.');
+    useLoginStatus.getState().logout();
   }
 
   if (!response.ok) {

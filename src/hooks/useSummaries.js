@@ -1,53 +1,54 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import apiFetch from '../lib/api';
+import {
+  getSummaries,
+  createSummary,
+  updateSummary,
+  deleteSummary,
+} from '../services/summaries';
 
 export const useSummaries = (topicId) => {
+  const token = localStorage.getItem('token');
+
   return useQuery({
-    queryKey: topicId ? ['summaries', topicId] : ['summaries'],
-    queryFn: () => {
-      const query = topicId ? `?topicId=${topicId}` : '';
-      return apiFetch(`/summaries${query}`);
-    },
+    queryKey: ['summaries', topicId],
+    queryFn: () => getSummaries(topicId),
+    enabled: !!token,
+    retry: false,
   });
 };
 
 export const useCreateSummary = () => {
+  const token = localStorage.getItem('token');
   const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: (newSummary) =>
-      apiFetch('/summaries', {
-        method: 'POST',
-        body: JSON.stringify(newSummary),
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['summaries'] });
-    },
+    mutationFn: createSummary,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['summaries'] }),
+    enabled: !!token,
+    retry: false,
   });
 };
 
 export const useUpdateSummary = () => {
+  const token = localStorage.getItem('token');
   const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: ({ id, data }) =>
-      apiFetch(`/summaries/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['summaries'] });
-    },
+    mutationFn: ({ id, data }) => updateSummary(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['summaries'] }),
+    enabled: !!token,
+    retry: false,
   });
 };
 
 export const useDeleteSummary = () => {
+  const token = localStorage.getItem('token');
   const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: (id) =>
-      apiFetch(`/summaries/${id}`, {
-        method: 'DELETE',
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['summaries'] });
-    },
+    mutationFn: deleteSummary,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['summaries'] }),
+    enabled: !!token,
+    retry: false,
   });
 };

@@ -22,6 +22,7 @@ import TopicCards from './pages/Admin/TopicCards.jsx';
 import Login from './pages/Login.jsx';
 import Signup from './pages/Signup.jsx';
 import Courses from './pages/Admin/Courses.jsx';
+import CourseSubscriptions from './pages/Admin/CourseSubscriptions';
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -72,7 +73,7 @@ const router = createBrowserRouter([
         element: <Students />,
       },
       {
-        path: '/summaries',
+        path: '/subjects/:subjectId/topics/:topicId/summaries',
         element: <Summaries />,
       },
       {
@@ -82,10 +83,6 @@ const router = createBrowserRouter([
       {
         path: '/hints',
         element: <Hints />,
-      },
-      {
-        path: '/subject/:subjectId/topic/:topicId/cards',
-        element: <Cards />,
       },
       {
         path: '/login',
@@ -98,6 +95,10 @@ const router = createBrowserRouter([
       {
         path: '/courses',
         element: <Courses />,
+      },
+      {
+        path: '/courses/:courseId/subscriptions',
+        element: <CourseSubscriptions />,
       },
     ],
   },

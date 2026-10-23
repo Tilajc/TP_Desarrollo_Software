@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mail, Lock, User, Hash } from 'lucide-react';
+import { Mail, Lock, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useRegister } from '@/hooks/useUsers';
 import { useLogin } from '@/hooks/useAuth';
@@ -13,7 +13,6 @@ const Signup = () => {
     lastName: '',
     email: '',
     password: '',
-    docket: '',
   });
 
   const handleChange = (e) => {
@@ -135,26 +134,6 @@ const Signup = () => {
                   onChange={handleChange}
                   className="block w-full rounded-lg border border-gray-300 bg-gray-50 py-2.5 pl-10 pr-3 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:text-sm"
                   placeholder="********"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Número de Legajo
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                  <Hash className="h-5 w-5" />
-                </div>
-                <input
-                  type="text"
-                  name="docket"
-                  required
-                  value={formData.docket}
-                  onChange={handleChange}
-                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 py-2.5 pl-10 pr-3 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:text-sm"
-                  placeholder="Ej: 44094"
                 />
               </div>
             </div>

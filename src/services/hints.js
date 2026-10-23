@@ -1,7 +1,8 @@
 import apiFetch from '../lib/api';
 
-export const getHints = async () => {
-  return apiFetch('/hints');
+export const getHints = async (cardId) => {
+  const query = cardId ? `?cardId=${cardId}` : '';
+  return apiFetch(`/hints${query}`);
 };
 
 export const getHintById = async (id) => {
