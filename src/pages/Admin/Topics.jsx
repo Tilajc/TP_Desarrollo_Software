@@ -76,7 +76,7 @@ const Topics = () => {
     return <p className="p-4 text-red-500">Error al cargar los temas.</p>;
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-4 sm:p-6 max-w-5xl mx-auto">
       <Button
         variant="ghost"
         size="sm"
@@ -86,13 +86,14 @@ const Topics = () => {
         ← Volver a Materias
       </Button>
 
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">
+      {/* Solo se ajustó el layout del header para que no rompa en mobile */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold">
           Temas{subject ? ` de ${subject.name}` : ''}
         </h1>
         <Button
           onClick={handleOpenCreate}
-          className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
+          className="w-full sm:w-auto cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
         >
           + Crear Tema
         </Button>
@@ -108,7 +109,8 @@ const Topics = () => {
             </p>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Se sumó sm:grid-cols-2 para cubrir los 3 breakpoints */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {topics?.map((topic) => (
               <Card
                 key={topic.id}

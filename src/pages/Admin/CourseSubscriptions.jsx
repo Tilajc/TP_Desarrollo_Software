@@ -94,11 +94,12 @@ const CourseSubscriptions = () => {
   }
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-4 sm:p-6 max-w-5xl mx-auto">
+      {/* Header Mobile-First: en celular el botón va abajo en ancho completo y en sm al costado */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <GraduationCap className="w-8 h-8 text-indigo-400" />
+          <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
+            <GraduationCap className="w-8 h-8 text-indigo-400 shrink-0" />
             Suscripciones a Cursos
           </h1>
           <p className="text-xs text-slate-400 mt-1">
@@ -107,7 +108,7 @@ const CourseSubscriptions = () => {
         </div>
         <Button
           onClick={handleOpenCreate}
-          className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
+          className="w-full sm:w-auto cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
         >
           + Nueva Suscripción
         </Button>
@@ -123,7 +124,8 @@ const CourseSubscriptions = () => {
             </p>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Grilla en los 3 breakpoints: celular (1 col), sm (2 cols), lg (3 cols) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {subscriptions?.map((sub) => (
               <Card
                 key={sub.id}
