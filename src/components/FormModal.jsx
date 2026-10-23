@@ -18,6 +18,7 @@ const FormModal = ({
   fields = [],
   initialData = null,
   onSubmit,
+  error,
   isLoading,
 }) => {
   const [formData, setFormData] = useState(() => {
@@ -94,6 +95,14 @@ const FormModal = ({
                   placeholder={field.placeholder}
                   required={field.required}
                 />
+              )}
+              {error && (
+                <p className="text-sm text-red-700">
+                  {
+                    error.errors?.find((err) => err.field === field.name)
+                      ?.message
+                  }
+                </p>
               )}
             </div>
           ))}

@@ -173,10 +173,10 @@ const Users = () => {
             fields={getFields(Boolean(selectedUser))}
             initialData={selectedUser}
             onSubmit={handleSubmit}
+            error={createMutation.error || updateMutation.error}
             isLoading={createMutation.isPending || updateMutation.isPending}
           />
 
-          {/* Modal de Confirmación de Eliminación */}
           <FormModal
             key={selectedUser ? `delete-${selectedUser.id}` : 'delete-user'}
             open={isDeleteModalOpen}

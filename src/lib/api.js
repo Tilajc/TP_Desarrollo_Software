@@ -20,7 +20,10 @@ const apiFetch = async (endpoint, options = {}) => {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || 'Error en la petición');
+    throw {
+      message: errorData.message || 'Error en la petición',
+      errors: errorData.errors || [],
+    };
   }
 
   if (response.status === 204) {
