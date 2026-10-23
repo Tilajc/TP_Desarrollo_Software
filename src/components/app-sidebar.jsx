@@ -3,9 +3,14 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  useSidebar,
 } from '@/components/ui/sidebar';
+
 import { Link, useNavigate } from 'react-router-dom';
+import { X } from 'lucide-react';
+
 import useLoginStatus from '../store/useLoginStatus';
+
 import { useGetMe } from '../hooks/useAuth';
 
 const MENU_ITEMS = [
@@ -24,7 +29,6 @@ const MENU_ITEMS = [
     to: '/subjects',
     roles: ['ADMIN', 'USER'],
   },
-
   {
     title: 'Apuntes',
     to: '/notes',
@@ -46,7 +50,6 @@ const MENU_ITEMS = [
     to: '/users',
     roles: ['ADMIN'],
   },
-
   {
     title: 'Cursos',
     to: '/courses',
@@ -61,31 +64,44 @@ const MENU_ITEMS = [
 
 const AppSidebar = () => {
   const { isLoggedIn, logout } = useLoginStatus();
+
   const { data: user } = useGetMe();
+  const { setOpenMobile } = useSidebar();
+
   const navigate = useNavigate();
 
   const userRole = user?.role ? user.role.toUpperCase() : 'USER';
 
   const visibleMenuItems = MENU_ITEMS.filter((item) => {
     if (!isLoggedIn) {
-      return (
-        item.roles.includes('USER') &&
-        (item.to === '/' || item.to === '/subjects')
-      );
+      return item.to === '/';
     }
+
     return item.roles.includes(userRole);
   });
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+
     logout();
+
     navigate('/');
   };
 
   return (
-    <Sidebar>
-      <SidebarHeader className="w-64 bg-slate-900 border-r border-slate-800" />
-      <SidebarContent className="w-64 bg-slate-900 border-r border-slate-800">
+    <Sidebar className="w-64 bg-slate-900 border-r border-slate-800 text-slate-100">
+      <SidebarHeader className="w-full bg-slate-900 flex flex-row justify-end p-2 md:hidden">
+        <button
+          type="button"
+          onClick={() => setOpenMobile(false)}
+          className="p-1.5 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
+          aria-label="Cerrar"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </SidebarHeader>
+
+      <SidebarContent className="w-full bg-slate-900">
         <nav className="flex flex-col justify-between p-4 h-full">
           <ul className="flex flex-col gap-2">
             {visibleMenuItems.map((item) => (
@@ -110,20 +126,29 @@ const AppSidebar = () => {
                 Cerrar Sesión
               </button>
             ) : (
-              <Link
-                to="/login"
-                className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
-                onClick={() => {
-                  localStorage.removeItem('token');
-                }}
-              >
-                Iniciar Sesión
-              </Link>
+              <div className="flex flex-col gap-1">
+                <Link
+                  to="/login"
+                  className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
+                  onClick={() => {
+                    localStorage.removeItem('token');
+                  }}
+                >
+                  Iniciar Sesión
+                </Link>
+                <Link
+                  to="/register"
+                  className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
+                >
+                  Registrarte
+                </Link>
+              </div>
             )}
           </div>
         </nav>
       </SidebarContent>
-      <SidebarFooter className="w-64 bg-slate-900 border-r border-slate-800" />
+
+      <SidebarFooter className="w-full bg-slate-900" />
     </Sidebar>
   );
 };

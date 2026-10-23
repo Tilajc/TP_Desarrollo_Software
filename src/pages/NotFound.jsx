@@ -29,11 +29,10 @@ export default function NotFound() {
       {/* Botón Volver al Inicio */}
       <Button
         asChild
-        size="lg"
-        className="bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-6 py-2.5 rounded-lg shadow-lg hover:shadow-indigo-500/25 transition-all cursor-pointer"
+        className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-medium shadow-none transition-all"
       >
         <Link to="/" className="inline-flex items-center gap-2">
-          <Home className="w-5 h-5" />
+          <Home className="w-4 h-4" />
           Volver al Inicio
         </Link>
       </Button>
