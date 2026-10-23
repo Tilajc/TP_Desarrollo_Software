@@ -23,6 +23,7 @@ import Login from './pages/Login.jsx';
 import Signup from './pages/Signup.jsx';
 import Courses from './pages/Admin/Courses.jsx';
 import CourseSubscriptions from './pages/Admin/CourseSubscriptions';
+import NotFound from './pages/NotFound.jsx';
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -101,6 +102,10 @@ const router = createBrowserRouter([
         element: <CourseSubscriptions />,
       },
     ],
+  },
+  {
+    path: '*',
+    element: <NotFound />,
   },
 ]);
 
