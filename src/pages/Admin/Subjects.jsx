@@ -8,6 +8,7 @@ import {
   useDeleteSubject,
 } from '../../hooks/useSubjects';
 import FormModal from '../../components/FormModal';
+import { subjectSchema } from '../../schemas/subject';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -174,6 +175,7 @@ const Subjects = () => {
             title={selectedSubject ? 'Editar Materia' : 'Nueva Materia'}
             fields={SUBJECT_FIELDS}
             initialData={selectedSubject}
+            schema={subjectSchema}
             onSubmit={handleSubmit}
             error={createMutation.error || updateMutation.error}
             isLoading={createMutation.isPending || updateMutation.isPending}
@@ -181,9 +183,7 @@ const Subjects = () => {
 
           <FormModal
             key={
-              isDeleteModalOpen
-                ? `delete-${selectedSubject?.id}`
-                : 'delete-closed'
+              isDeleteModalOpen ? `delete-${selectedSubject?.id}` : 'delete-closed'
             }
             open={isDeleteModalOpen}
             onOpenChange={(isOpen) => {

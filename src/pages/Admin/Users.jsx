@@ -6,6 +6,7 @@ import {
   useDeleteUser,
 } from '../../hooks/useUsers';
 import FormModal from '../../components/FormModal';
+import { getUserSchema } from '../../schemas/user';
 import { Button } from '@/components/ui/button';
 import { Pencil, X } from 'lucide-react';
 import {
@@ -192,6 +193,7 @@ const Users = () => {
             title={selectedUser ? 'Editar Usuario' : 'Nuevo Usuario'}
             fields={getFields(Boolean(selectedUser))}
             initialData={selectedUser}
+            schema={getUserSchema(Boolean(selectedUser))}
             onSubmit={handleSubmit}
             error={createMutation.error || updateMutation.error}
             isLoading={createMutation.isPending || updateMutation.isPending}

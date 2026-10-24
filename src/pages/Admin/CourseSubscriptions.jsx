@@ -7,6 +7,7 @@ import {
   useDeleteCourseSubscription,
 } from '../../hooks/useCourseSubscriptions';
 import FormModal from '../../components/FormModal';
+import { courseSubscriptionSchema } from '../../schemas/courseSubscription';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -198,6 +199,7 @@ const CourseSubscriptions = () => {
             }
             fields={SUBSCRIPTION_FIELDS}
             initialData={selectedSub}
+            schema={courseSubscriptionSchema}
             onSubmit={handleSubmit}
             error={createMutation.error || updateMutation.error}
             isLoading={createMutation.isPending || updateMutation.isPending}

@@ -9,6 +9,7 @@ import {
   useDeleteTopic,
 } from '../../hooks/useTopics';
 import FormModal from '../../components/FormModal';
+import { topicSchema } from '../../schemas/topic';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import GetSkeleton from '@/components/GetSkeleton';
@@ -197,6 +198,7 @@ const Topics = () => {
             title={selectedTopic ? 'Editar Tema' : 'Nuevo Tema'}
             fields={TOPIC_FIELDS}
             initialData={selectedTopic}
+            schema={topicSchema}
             onSubmit={handleSubmit}
             error={createMutation.error || updateMutation.error}
             isLoading={createMutation.isPending || updateMutation.isPending}
@@ -204,9 +206,7 @@ const Topics = () => {
 
           <FormModal
             key={
-              isDeleteModalOpen
-                ? `delete-${selectedTopic?.id}`
-                : 'delete-closed'
+              isDeleteModalOpen ? `delete-${selectedTopic?.id}` : 'delete-closed'
             }
             open={isDeleteModalOpen}
             onOpenChange={(isOpen) => {

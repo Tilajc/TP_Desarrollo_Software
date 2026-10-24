@@ -7,9 +7,9 @@ import {
   ArrowRight,
   RotateCcw,
 } from 'lucide-react';
-import { useCards } from '../../hooks/useCards';
-import { useHints } from '../../hooks/useHints';
-import { useTopic } from '../../hooks/useTopics';
+import { useCards } from '../hooks/useCards';
+import { useHints } from '../hooks/useHints';
+import { useTopic } from '../hooks/useTopics';
 import GetSkeleton from '@/components/GetSkeleton';
 import { Button } from '@/components/ui/button';
 

@@ -8,6 +8,7 @@ import {
   useDeleteSummary,
 } from '../../hooks/useSummaries';
 import FormModal from '../../components/FormModal';
+import { summarySchema } from '../../schemas/summary';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -189,6 +190,7 @@ const Summaries = () => {
             title={selectedSummary ? 'Editar Resumen' : 'Nuevo Resumen'}
             fields={SUMMARY_FIELDS}
             initialData={selectedSummary}
+            schema={summarySchema}
             onSubmit={handleSubmit}
             error={createMutation.error || updateMutation.error}
             isLoading={createMutation.isPending || updateMutation.isPending}

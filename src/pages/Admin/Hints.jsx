@@ -6,6 +6,7 @@ import {
   useDeleteHint,
 } from '../../hooks/useHints';
 import FormModal from '../../components/FormModal';
+import { hintSchema } from '../../schemas/hint';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -160,6 +161,7 @@ const Hints = () => {
             title={selectedHint ? 'Editar Pista' : 'Nueva Pista'}
             fields={HINT_FIELDS}
             initialData={selectedHint}
+            schema={hintSchema}
             onSubmit={handleSubmit}
             error={createMutation.error || updateMutation.error}
             isLoading={createMutation.isPending || updateMutation.isPending}

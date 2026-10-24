@@ -10,7 +10,7 @@ import useLoginStatus from './store/useLoginStatus';
 import './index.css';
 import Layout from './Layout';
 import Home from './pages/Home.jsx';
-import Cards from './pages/Admin/Cards.jsx';
+import Cards from './pages/Cards.jsx';
 import Subjects from './pages/Admin/Subjects.jsx';
 import Students from './pages/Students.jsx';
 import Summaries from './pages/Admin/Summaries.jsx';

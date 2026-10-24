@@ -8,6 +8,7 @@ import {
   useDeleteCourse,
 } from '../../hooks/useCourses';
 import FormModal from '../../components/FormModal';
+import { courseSchema } from '../../schemas/course';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -40,7 +41,6 @@ const Courses = () => {
 
   const courseFields = useMemo(() => {
     return [
-      // Solo el admin puede elegir el autor; para el resto el autor es el usuario logueado
       ...(isAdmin
         ? [
             {
@@ -206,6 +206,7 @@ const Courses = () => {
             title={selectedCourse ? 'Editar Curso' : 'Nuevo Curso'}
             fields={courseFields}
             initialData={selectedCourse}
+            schema={courseSchema}
             onSubmit={handleSubmit}
             error={createMutation.error || updateMutation.error}
             isLoading={createMutation.isPending || updateMutation.isPending}

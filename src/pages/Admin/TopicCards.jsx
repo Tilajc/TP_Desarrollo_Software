@@ -10,6 +10,7 @@ import {
 } from '../../hooks/useCards';
 import { useCreateHint, useHints } from '../../hooks/useHints';
 import FormModal from '../../components/FormModal';
+import { cardSchema } from '../../schemas/card';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -181,7 +182,7 @@ const TopicCards = () => {
               return (
                 <Card
                   key={card.id}
-                  className="flex flex-col justify-between relative h-auto min-h-[190px]"
+                  className="flex flex-col justify-between relative h-auto min-h-47.5"
                 >
                   <div className="absolute right-0 top-0 z-10 flex gap-2 p-2">
                     <Button
@@ -208,12 +209,12 @@ const TopicCards = () => {
 
                   <CardHeader className="p-5 flex-1 flex flex-col justify-between">
                     <div className="space-y-2">
-                      <CardTitle className="mr-20 text-lg font-bold leading-snug break-words">
+                      <CardTitle className="mr-20 text-lg font-bold leading-snug wrap-break-words">
                         {card.question}
                       </CardTitle>
 
                       {/* Sin line-clamp: el texto se acomoda y expande la tarjeta hacia abajo */}
-                      <CardDescription className="text-sm leading-relaxed break-words whitespace-normal text-slate-600 dark:text-slate-300">
+                      <CardDescription className="text-sm leading-relaxed wrap-break-words whitespace-normal text-slate-600 dark:text-slate-300">
                         {card.answer}
                       </CardDescription>
                     </div>
@@ -221,7 +222,7 @@ const TopicCards = () => {
                     {cardHint && (
                       <div className="mt-4 flex items-start gap-2 text-xs bg-sky-50 border border-sky-200 text-sky-900 px-3 py-2.5 rounded-lg">
                         <Lightbulb className="w-4 h-4 shrink-0 text-sky-600 mt-0.5" />
-                        <div className="leading-relaxed break-words whitespace-normal">
+                        <div className="leading-relaxed wrap-break-words whitespace-normal">
                           <strong className="font-semibold text-sky-950 mr-1">
                             Pista:
                           </strong>
@@ -242,6 +243,7 @@ const TopicCards = () => {
             title={selectedCard ? 'Editar Tarjeta' : 'Nueva Tarjeta'}
             fields={CARD_FIELDS}
             initialData={selectedCard}
+            schema={cardSchema}
             onSubmit={handleSubmit}
             error={createMutation.error || updateMutation.error}
             isLoading={
