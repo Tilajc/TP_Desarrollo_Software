@@ -30,11 +30,6 @@ const MENU_ITEMS = [
     roles: ['ADMIN', 'USER'],
   },
   {
-    title: 'Apuntes',
-    to: '/notes',
-    roles: ['USER'],
-  },
-  {
     title: 'Tarjetas',
     to: '/cards',
     roles: ['USER'],
@@ -44,7 +39,6 @@ const MENU_ITEMS = [
     to: '/summaries',
     roles: ['USER'],
   },
-  // Opciones exclusivas de ADMIN
   {
     title: 'Usuarios',
     to: '/users',

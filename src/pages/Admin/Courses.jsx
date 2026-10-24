@@ -85,15 +85,33 @@ const Courses = () => {
     setIsDeleteModalOpen(true);
   };
 
+  const handleModalOpenChange = (isOpen) => {
+    setIsModalOpen(isOpen);
+    if (!isOpen) {
+      createMutation.reset();
+      updateMutation.reset();
+      setSelectedCourse(null);
+    }
+  };
+
   const handleSubmit = (formData) => {
     if (selectedCourse) {
       updateMutation.mutate(
         { id: selectedCourse.id, data: formData },
-        { onSuccess: () => setIsModalOpen(false) }
+        {
+          onSuccess: () => {
+            setIsModalOpen(false);
+            updateMutation.reset();
+            setSelectedCourse(null);
+          },
+        }
       );
     } else {
       createMutation.mutate(formData, {
-        onSuccess: () => setIsModalOpen(false),
+        onSuccess: () => {
+          setIsModalOpen(false);
+          createMutation.reset();
+        },
       });
     }
   };
@@ -101,7 +119,11 @@ const Courses = () => {
   const handleDeleteSubmit = () => {
     if (!selectedCourse) return;
     deleteMutation.mutate(selectedCourse.id, {
-      onSuccess: () => setIsDeleteModalOpen(false),
+      onSuccess: () => {
+        setIsDeleteModalOpen(false);
+        deleteMutation.reset();
+        setSelectedCourse(null);
+      },
     });
   };
 
@@ -180,20 +202,26 @@ const Courses = () => {
           <FormModal
             key={selectedCourse ? `edit-${selectedCourse.id}` : 'create-course'}
             open={isModalOpen}
-            onOpenChange={setIsModalOpen}
+            onOpenChange={handleModalOpenChange}
             title={selectedCourse ? 'Editar Curso' : 'Nuevo Curso'}
             fields={courseFields}
             initialData={selectedCourse}
             onSubmit={handleSubmit}
+            error={createMutation.error || updateMutation.error}
             isLoading={createMutation.isPending || updateMutation.isPending}
           />
 
           <FormModal
             key={
-              selectedCourse ? `delete-${selectedCourse.id}` : 'delete-course'
+              isDeleteModalOpen
+                ? `delete-${selectedCourse?.id}`
+                : 'delete-closed'
             }
             open={isDeleteModalOpen}
-            onOpenChange={setIsDeleteModalOpen}
+            onOpenChange={(isOpen) => {
+              setIsDeleteModalOpen(isOpen);
+              if (!isOpen) setSelectedCourse(null);
+            }}
             title={`¿Deseas eliminar el curso "${selectedCourse?.subject?.name}"?`}
             fields={[]}
             onSubmit={handleDeleteSubmit}

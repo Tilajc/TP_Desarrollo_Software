@@ -10,13 +10,12 @@ import useLoginStatus from './store/useLoginStatus';
 import './index.css';
 import Layout from './Layout';
 import Home from './pages/Home.jsx';
-import Cards from './pages/Cards.jsx';
-import Notes from './pages/Notes.jsx';
+import Cards from './pages/Admin/Cards.jsx';
 import Subjects from './pages/Admin/Subjects.jsx';
 import Students from './pages/Students.jsx';
-import Summaries from './pages/Summaries.jsx';
+import Summaries from './pages/Admin/Summaries.jsx';
 import Users from './pages/Admin/Users.jsx';
-import Hints from './pages/Hints.jsx';
+import Hints from './pages/Admin/Hints.jsx';
 import Topics from './pages/Admin/Topics.jsx';
 import TopicCards from './pages/Admin/TopicCards.jsx';
 import Login from './pages/Login.jsx';
@@ -60,10 +59,6 @@ const router = createBrowserRouter([
       {
         path: '/subject/:subjectId/topic/:topicId/summaries',
         element: <Summaries />,
-      },
-      {
-        path: '/notes',
-        element: <Notes />,
       },
       {
         path: '/cards',

@@ -60,15 +60,33 @@ const Subjects = () => {
     setIsDeleteModalOpen(true);
   };
 
+  const handleModalOpenChange = (isOpen) => {
+    setIsModalOpen(isOpen);
+    if (!isOpen) {
+      createMutation.reset();
+      updateMutation.reset();
+      setSelectedSubject(null);
+    }
+  };
+
   const handleSubmit = (formData) => {
     if (selectedSubject) {
       updateMutation.mutate(
         { id: selectedSubject.id, data: formData },
-        { onSuccess: () => setIsModalOpen(false) }
+        {
+          onSuccess: () => {
+            setIsModalOpen(false);
+            updateMutation.reset();
+            setSelectedSubject(null);
+          },
+        }
       );
     } else {
       createMutation.mutate(formData, {
-        onSuccess: () => setIsModalOpen(false),
+        onSuccess: () => {
+          setIsModalOpen(false);
+          createMutation.reset();
+        },
       });
     }
   };
@@ -76,7 +94,11 @@ const Subjects = () => {
   const handleDeleteSubmit = () => {
     if (!selectedSubject) return;
     deleteMutation.mutate(selectedSubject.id, {
-      onSuccess: () => setIsDeleteModalOpen(false),
+      onSuccess: () => {
+        setIsDeleteModalOpen(false);
+        deleteMutation.reset();
+        setSelectedSubject(null);
+      },
     });
   };
 
@@ -148,22 +170,26 @@ const Subjects = () => {
               selectedSubject ? `edit-${selectedSubject.id}` : 'create-subject'
             }
             open={isModalOpen}
-            onOpenChange={setIsModalOpen}
+            onOpenChange={handleModalOpenChange}
             title={selectedSubject ? 'Editar Materia' : 'Nueva Materia'}
             fields={SUBJECT_FIELDS}
             initialData={selectedSubject}
             onSubmit={handleSubmit}
+            error={createMutation.error || updateMutation.error}
             isLoading={createMutation.isPending || updateMutation.isPending}
           />
 
           <FormModal
             key={
-              selectedSubject
-                ? `delete-${selectedSubject.id}`
-                : 'delete-subject'
+              isDeleteModalOpen
+                ? `delete-${selectedSubject?.id}`
+                : 'delete-closed'
             }
             open={isDeleteModalOpen}
-            onOpenChange={setIsDeleteModalOpen}
+            onOpenChange={(isOpen) => {
+              setIsDeleteModalOpen(isOpen);
+              if (!isOpen) setSelectedSubject(null);
+            }}
             title={`¿Deseas eliminar la materia "${selectedSubject?.name}"?`}
             fields={[]}
             onSubmit={handleDeleteSubmit}

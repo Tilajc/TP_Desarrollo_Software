@@ -4,8 +4,8 @@ import {
   useCreateHint,
   useUpdateHint,
   useDeleteHint,
-} from '../hooks/useHints';
-import FormModal from '../components/FormModal';
+} from '../../hooks/useHints';
+import FormModal from '../../components/FormModal';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -57,6 +57,15 @@ const Hints = () => {
     setIsDeleteModalOpen(true);
   };
 
+  const handleModalOpenChange = (isOpen) => {
+    setIsModalOpen(isOpen);
+    if (!isOpen) {
+      createMutation.reset();
+      updateMutation.reset();
+      setSelectedHint(null);
+    }
+  };
+
   const handleSubmit = (formData) => {
     const payload = {
       ...formData,
@@ -65,11 +74,20 @@ const Hints = () => {
     if (selectedHint) {
       updateMutation.mutate(
         { id: selectedHint.id, data: payload },
-        { onSuccess: () => setIsModalOpen(false) }
+        {
+          onSuccess: () => {
+            setIsModalOpen(false);
+            updateMutation.reset();
+            setSelectedHint(null);
+          },
+        }
       );
     } else {
       createMutation.mutate(payload, {
-        onSuccess: () => setIsModalOpen(false),
+        onSuccess: () => {
+          setIsModalOpen(false);
+          createMutation.reset();
+        },
       });
     }
   };
@@ -77,7 +95,11 @@ const Hints = () => {
   const handleDeleteSubmit = () => {
     if (!selectedHint) return;
     deleteMutation.mutate(selectedHint.id, {
-      onSuccess: () => setIsDeleteModalOpen(false),
+      onSuccess: () => {
+        setIsDeleteModalOpen(false);
+        deleteMutation.reset();
+        setSelectedHint(null);
+      },
     });
   };
 
@@ -134,18 +156,24 @@ const Hints = () => {
           <FormModal
             key={selectedHint ? `edit-${selectedHint.id}` : 'create-hint'}
             open={isModalOpen}
-            onOpenChange={setIsModalOpen}
+            onOpenChange={handleModalOpenChange}
             title={selectedHint ? 'Editar Pista' : 'Nueva Pista'}
             fields={HINT_FIELDS}
             initialData={selectedHint}
             onSubmit={handleSubmit}
+            error={createMutation.error || updateMutation.error}
             isLoading={createMutation.isPending || updateMutation.isPending}
           />
 
           <FormModal
-            key={selectedHint ? `delete-${selectedHint.id}` : 'delete-hint'}
+            key={
+              isDeleteModalOpen ? `delete-${selectedHint?.id}` : 'delete-closed'
+            }
             open={isDeleteModalOpen}
-            onOpenChange={setIsDeleteModalOpen}
+            onOpenChange={(isOpen) => {
+              setIsDeleteModalOpen(isOpen);
+              if (!isOpen) setSelectedHint(null);
+            }}
             title={`¿Deseas eliminar esta pista?`}
             fields={[]}
             onSubmit={handleDeleteSubmit}

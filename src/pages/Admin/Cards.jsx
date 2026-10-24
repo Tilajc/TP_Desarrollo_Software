@@ -7,9 +7,9 @@ import {
   ArrowRight,
   RotateCcw,
 } from 'lucide-react';
-import { useCards } from '../hooks/useCards';
-import { useHints } from '../hooks/useHints';
-import { useTopic } from '../hooks/useTopics';
+import { useCards } from '../../hooks/useCards';
+import { useHints } from '../../hooks/useHints';
+import { useTopic } from '../../hooks/useTopics';
 import GetSkeleton from '@/components/GetSkeleton';
 import { Button } from '@/components/ui/button';
 
@@ -17,7 +17,6 @@ const Cards = () => {
   const { topicId: routeTopicId } = useParams();
   const navigate = useNavigate();
 
-  // Si no viene topicId en la URL, toma por defecto el ID 2
   const activeTopicId = routeTopicId || 2;
 
   const { data: topic } = useTopic(activeTopicId);
@@ -33,10 +32,8 @@ const Cards = () => {
   const [showHint, setShowHint] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
 
-  // Tarjeta actual
   const currentCard = cards && cards.length > 0 ? cards[currentIndex] : null;
 
-  // Buscar si la tarjeta actual tiene pista asociada en la BD
   const currentHint = currentCard
     ? hints?.find((h) => h.cardId === currentCard.id)?.content
     : null;
@@ -118,7 +115,6 @@ const Cards = () => {
   return (
     <div className="w-full min-h-screen bg-[#0b0f19] flex items-center justify-center p-4">
       <div className="w-full max-w-lg bg-[#0f1422] border border-slate-800 rounded-2xl p-6 shadow-2xl">
-        {/* Cabecera */}
         <div className="border-b border-slate-800 pb-4 mb-4 flex items-center justify-between">
           <Button
             variant="ghost"
@@ -136,7 +132,6 @@ const Cards = () => {
 
         {!isFinished ? (
           <>
-            {/* Contador */}
             <div className="flex items-center justify-between text-xs text-slate-500 mb-4 font-medium px-1">
               <span>
                 Tarjeta {currentIndex + 1} de {cards.length}
@@ -162,7 +157,6 @@ const Cards = () => {
               </div>
             </div>
 
-            {/* Flashcard interactiva */}
             <div
               onClick={() => setShowAnswer(!showAnswer)}
               className="w-full min-h-55 bg-[#0b0f19]/80 border border-slate-800 rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-purple-500/40 transition-all select-none group shadow-inner"
@@ -194,7 +188,6 @@ const Cards = () => {
               )}
             </div>
 
-            {/* Pista Dinámica */}
             {currentHint && (
               <div className="mt-4">
                 <button
@@ -222,7 +215,6 @@ const Cards = () => {
               </div>
             )}
 
-            {/* Botones de Autoevaluación */}
             <div className="grid grid-cols-3 gap-3 mt-6">
               <button
                 type="button"
@@ -248,7 +240,6 @@ const Cards = () => {
             </div>
           </>
         ) : (
-          /* Vista de sesión finalizada */
           <div className="text-center py-8 space-y-4">
             <div className="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto border border-emerald-500/20">
               ✓
