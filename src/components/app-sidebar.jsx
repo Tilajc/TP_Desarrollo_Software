@@ -112,13 +112,20 @@ const AppSidebar = () => {
 
           <div className="pt-4 border-t border-slate-800">
             {isLoggedIn ? (
-              <button
-                type="button"
-                className="w-full text-left block p-2 text-md font-semibold text-red-400 hover:text-red-300 hover:bg-slate-800 rounded transition-colors cursor-pointer"
-                onClick={handleLogout}
-              >
-                Cerrar Sesión
-              </button>
+              <div className="flex flex-col gap-1">
+                <Link
+                  to="/profile"
+                  className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
+                >
+                  Mi Perfil
+                </Link>
+                <Link
+                  className="w-full text-left block p-2 text-md font-semibold text-red-400 hover:text-red-300 hover:bg-slate-800 rounded transition-colors cursor-pointer"
+                  onClick={handleLogout}
+                >
+                  Cerrar Sesión
+                </Link>
+              </div>
             ) : (
               <div className="flex flex-col gap-1">
                 <Link
