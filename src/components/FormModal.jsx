@@ -17,7 +17,9 @@ const FormModal = ({
   title,
   fields = [],
   initialData = null,
+  schema,
   onSubmit,
+  error,
   isLoading,
 }) => {
   const [formData, setFormData] = useState(() => {
@@ -29,14 +31,37 @@ const FormModal = ({
     return defaultState;
   });
 
+  const [localError, setLocalError] = useState(null);
+
   const handleChange = (name, value) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setLocalError((prev) =>
+      prev ? { errors: prev.errors.filter((err) => err.field !== name) } : prev
+    );
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (schema) {
+      const result = schema.safeParse(formData);
+
+      if (!result.success) {
+        setLocalError({
+          errors: result.error.issues.map((issue) => ({
+            field: issue.path[0],
+            message: issue.message,
+          })),
+        });
+        return;
+      }
+    }
+
+    setLocalError(null);
     onSubmit(formData);
   };
+
+  const shownError = localError || error;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -94,6 +119,14 @@ const FormModal = ({
                   placeholder={field.placeholder}
                   required={field.required}
                 />
+              )}
+              {shownError && (
+                <p className="text-sm text-red-700">
+                  {
+                    shownError.errors?.find((err) => err.field === field.name)
+                      ?.message
+                  }
+                </p>
               )}
             </div>
           ))}

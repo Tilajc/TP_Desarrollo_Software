@@ -6,6 +6,7 @@ import {
   useDeleteUser,
 } from '../../hooks/useUsers';
 import FormModal from '../../components/FormModal';
+import { getUserSchema } from '../../schemas/user';
 import { Button } from '@/components/ui/button';
 import { Pencil, X } from 'lucide-react';
 import {
@@ -82,10 +83,17 @@ const Users = () => {
     setIsDeleteModalOpen(true);
   };
 
+  const handleModalOpenChange = (isOpen) => {
+    setIsModalOpen(isOpen);
+    if (!isOpen) {
+      createMutation.reset();
+      updateMutation.reset();
+      setSelectedUser(null);
+    }
+  };
+
   const handleSubmit = (formData) => {
-    const payload = {
-      ...formData,
-    };
+    const payload = { ...formData };
 
     if (selectedUser) {
       if (!payload.password) {
@@ -94,11 +102,20 @@ const Users = () => {
 
       updateMutation.mutate(
         { id: selectedUser.id, data: payload },
-        { onSuccess: () => setIsModalOpen(false) }
+        {
+          onSuccess: () => {
+            setIsModalOpen(false);
+            updateMutation.reset();
+            setSelectedUser(null);
+          },
+        }
       );
     } else {
       createMutation.mutate(payload, {
-        onSuccess: () => setIsModalOpen(false),
+        onSuccess: () => {
+          setIsModalOpen(false);
+          createMutation.reset();
+        },
       });
     }
   };
@@ -106,7 +123,11 @@ const Users = () => {
   const handleDeleteSubmit = () => {
     if (!selectedUser) return;
     deleteMutation.mutate(selectedUser.id, {
-      onSuccess: () => setIsDeleteModalOpen(false),
+      onSuccess: () => {
+        setIsDeleteModalOpen(false);
+        deleteMutation.reset();
+        setSelectedUser(null);
+      },
     });
   };
 
@@ -168,19 +189,25 @@ const Users = () => {
           <FormModal
             key={selectedUser ? `edit-${selectedUser.id}` : 'create-user'}
             open={isModalOpen}
-            onOpenChange={setIsModalOpen}
+            onOpenChange={handleModalOpenChange}
             title={selectedUser ? 'Editar Usuario' : 'Nuevo Usuario'}
             fields={getFields(Boolean(selectedUser))}
             initialData={selectedUser}
+            schema={getUserSchema(Boolean(selectedUser))}
             onSubmit={handleSubmit}
+            error={createMutation.error || updateMutation.error}
             isLoading={createMutation.isPending || updateMutation.isPending}
           />
 
-          {/* Modal de Confirmación de Eliminación */}
           <FormModal
-            key={selectedUser ? `delete-${selectedUser.id}` : 'delete-user'}
+            key={
+              isDeleteModalOpen ? `delete-${selectedUser?.id}` : 'delete-closed'
+            }
             open={isDeleteModalOpen}
-            onOpenChange={setIsDeleteModalOpen}
+            onOpenChange={(isOpen) => {
+              setIsDeleteModalOpen(isOpen);
+              if (!isOpen) setSelectedUser(null);
+            }}
             title={`¿Deseas eliminar al usuario "${selectedUser?.name}"?`}
             fields={[]}
             onSubmit={handleDeleteSubmit}

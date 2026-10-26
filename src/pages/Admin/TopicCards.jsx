@@ -10,6 +10,7 @@ import {
 } from '../../hooks/useCards';
 import { useCreateHint, useHints } from '../../hooks/useHints';
 import FormModal from '../../components/FormModal';
+import { cardSchema } from '../../schemas/card';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -78,6 +79,15 @@ const TopicCards = () => {
     setIsDeleteModalOpen(true);
   };
 
+  const handleModalOpenChange = (isOpen) => {
+    setIsModalOpen(isOpen);
+    if (!isOpen) {
+      createMutation.reset();
+      updateMutation.reset();
+      setSelectedCard(null);
+    }
+  };
+
   const handleSubmit = (formData) => {
     const { hint, ...cardData } = formData;
 
@@ -93,6 +103,8 @@ const TopicCards = () => {
               });
             }
             setIsModalOpen(false);
+            updateMutation.reset();
+            setSelectedCard(null);
           },
         }
       );
@@ -109,6 +121,7 @@ const TopicCards = () => {
               });
             }
             setIsModalOpen(false);
+            createMutation.reset();
           },
         }
       );
@@ -118,7 +131,11 @@ const TopicCards = () => {
   const handleDeleteSubmit = () => {
     if (!selectedCard) return;
     deleteMutation.mutate(selectedCard.id, {
-      onSuccess: () => setIsDeleteModalOpen(false),
+      onSuccess: () => {
+        setIsDeleteModalOpen(false);
+        deleteMutation.reset();
+        setSelectedCard(null);
+      },
     });
   };
 
@@ -126,7 +143,7 @@ const TopicCards = () => {
     return <p className="p-4 text-red-500">Error al cargar las tarjetas.</p>;
 
   return (
-    <div className="p-4 sm:p-6 max-w-5xl mx-auto">
+    <div className="p-6 max-w-5xl mx-auto">
       <Button
         variant="ghost"
         size="sm"
@@ -136,14 +153,13 @@ const TopicCards = () => {
         ← Volver a Temas
       </Button>
 
-      {/* Header Mobile-First: en celular el botón pasa abajo al 100% y en SM se ubica al costado */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">
           Tarjetas{topic ? ` de ${topic.name}` : ''}
         </h1>
         <Button
           onClick={handleOpenCreate}
-          className="w-full sm:w-auto cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
+          className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
         >
           + Crear Tarjeta
         </Button>
@@ -159,15 +175,14 @@ const TopicCards = () => {
             </p>
           )}
 
-          {}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {cards?.map((card) => {
               const cardHint = hints?.find((h) => h.cardId === card.id);
 
               return (
                 <Card
                   key={card.id}
-                  className="flex flex-col justify-between relative h-[210px] sm:h-[220px]"
+                  className="flex flex-col justify-between relative h-auto min-h-47.5"
                 >
                   <div className="absolute right-0 top-0 z-10 flex gap-2 p-2">
                     <Button
@@ -192,42 +207,28 @@ const TopicCards = () => {
                     </Button>
                   </div>
 
-                  <CardHeader className="p-5 flex-1 flex flex-col justify-between overflow-hidden">
-                    <div className="space-y-1.5">
-                      {/* Pregunta truncada a 2 líneas con tooltip nativo al pasar el cursor */}
-                      <CardTitle
-                        className="mr-16 text-base sm:text-lg font-bold leading-snug line-clamp-2 cursor-help"
-                        title={card.question}
-                      >
+                  <CardHeader className="p-5 flex-1 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <CardTitle className="mr-20 text-lg font-bold leading-snug wrap-break-words">
                         {card.question}
                       </CardTitle>
 
-                      {/* Respuesta truncada a 2 líneas con tooltip nativo */}
-                      <CardDescription
-                        className="text-sm leading-relaxed text-slate-600 dark:text-slate-300 line-clamp-2 cursor-help"
-                        title={card.answer}
-                      >
+                      {/* Sin line-clamp: el texto se acomoda y expande la tarjeta hacia abajo */}
+                      <CardDescription className="text-sm leading-relaxed wrap-break-words whitespace-normal text-slate-600 dark:text-slate-300">
                         {card.answer}
                       </CardDescription>
                     </div>
 
-                    {/* Contenedor de la pista fijado en la parte inferior */}
-                    {cardHint ? (
-                      <div
-                        className="mt-3 flex items-start gap-2 text-xs bg-sky-50 border border-sky-200 text-sky-900 px-3 py-2 rounded-lg cursor-help"
-                        title={cardHint.content}
-                      >
-                        <Lightbulb className="w-3.5 h-3.5 shrink-0 text-sky-600 mt-0.5" />
-                        <div className="leading-snug line-clamp-1">
+                    {cardHint && (
+                      <div className="mt-4 flex items-start gap-2 text-xs bg-sky-50 border border-sky-200 text-sky-900 px-3 py-2.5 rounded-lg">
+                        <Lightbulb className="w-4 h-4 shrink-0 text-sky-600 mt-0.5" />
+                        <div className="leading-relaxed wrap-break-words whitespace-normal">
                           <strong className="font-semibold text-sky-950 mr-1">
                             Pista:
                           </strong>
                           {cardHint.content}
                         </div>
                       </div>
-                    ) : (
-                      /* Espacio vacío para equilibrar las tarjetas sin pista */
-                      <div className="mt-3 h-[34px]" />
                     )}
                   </CardHeader>
                 </Card>
@@ -238,11 +239,13 @@ const TopicCards = () => {
           <FormModal
             key={selectedCard ? `edit-${selectedCard.id}` : 'create-card'}
             open={isModalOpen}
-            onOpenChange={setIsModalOpen}
+            onOpenChange={handleModalOpenChange}
             title={selectedCard ? 'Editar Tarjeta' : 'Nueva Tarjeta'}
             fields={CARD_FIELDS}
             initialData={selectedCard}
+            schema={cardSchema}
             onSubmit={handleSubmit}
+            error={createMutation.error || updateMutation.error}
             isLoading={
               createMutation.isPending ||
               updateMutation.isPending ||
@@ -251,9 +254,14 @@ const TopicCards = () => {
           />
 
           <FormModal
-            key={selectedCard ? `delete-${selectedCard.id}` : 'delete-card'}
+            key={
+              isDeleteModalOpen ? `delete-${selectedCard?.id}` : 'delete-closed'
+            }
             open={isDeleteModalOpen}
-            onOpenChange={setIsDeleteModalOpen}
+            onOpenChange={(isOpen) => {
+              setIsDeleteModalOpen(isOpen);
+              if (!isOpen) setSelectedCard(null);
+            }}
             title="¿Deseas eliminar esta tarjeta?"
             fields={[]}
             onSubmit={handleDeleteSubmit}

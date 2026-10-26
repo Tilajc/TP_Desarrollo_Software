@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useTopic } from '../hooks/useTopics';
+import { useTopic } from '../../hooks/useTopics';
 import {
   useSummaries,
   useCreateSummary,
   useUpdateSummary,
   useDeleteSummary,
-} from '../hooks/useSummaries';
-import FormModal from '../components/FormModal';
+} from '../../hooks/useSummaries';
+import FormModal from '../../components/FormModal';
+import { summarySchema } from '../../schemas/summary';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -63,6 +64,15 @@ const Summaries = () => {
     setIsDeleteModalOpen(true);
   };
 
+  const handleModalOpenChange = (isOpen) => {
+    setIsModalOpen(isOpen);
+    if (!isOpen) {
+      createMutation.reset();
+      updateMutation.reset();
+      setSelectedSummary(null);
+    }
+  };
+
   const handleSubmit = (formData) => {
     const payload = {
       ...formData,
@@ -72,11 +82,20 @@ const Summaries = () => {
     if (selectedSummary) {
       updateMutation.mutate(
         { id: selectedSummary.id, data: payload },
-        { onSuccess: () => setIsModalOpen(false) }
+        {
+          onSuccess: () => {
+            setIsModalOpen(false);
+            updateMutation.reset();
+            setSelectedSummary(null);
+          },
+        }
       );
     } else {
       createMutation.mutate(payload, {
-        onSuccess: () => setIsModalOpen(false),
+        onSuccess: () => {
+          setIsModalOpen(false);
+          createMutation.reset();
+        },
       });
     }
   };
@@ -84,7 +103,11 @@ const Summaries = () => {
   const handleDeleteSubmit = () => {
     if (!selectedSummary) return;
     deleteMutation.mutate(selectedSummary.id, {
-      onSuccess: () => setIsDeleteModalOpen(false),
+      onSuccess: () => {
+        setIsDeleteModalOpen(false);
+        deleteMutation.reset();
+        setSelectedSummary(null);
+      },
     });
   };
 
@@ -92,8 +115,8 @@ const Summaries = () => {
     return <p className="p-4 text-red-500">Error al cargar los resúmenes.</p>;
 
   return (
-    <div className="p-4 sm:p-6 max-w-5xl mx-auto">
-      {/* Botón Volver */}
+    <div className="p-6 max-w-5xl mx-auto">
+      {/* Botón idéntico al de TopicCards */}
       <Button
         variant="ghost"
         size="sm"
@@ -103,14 +126,13 @@ const Summaries = () => {
         ← Volver a Temas
       </Button>
 
-      {/* Header Mobile-First con botón adaptable w-full sm:w-auto */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">
           Resúmenes{topic ? ` de ${topic.name}` : ''}
         </h1>
         <Button
           onClick={handleOpenCreate}
-          className="w-full sm:w-auto cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
+          className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
         >
           + Crear Resumen
         </Button>
@@ -126,29 +148,18 @@ const Summaries = () => {
             </p>
           )}
 
-          {}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {summaries?.map((summary) => (
-              <Card
-                key={summary.id}
-                className="flex flex-col justify-between min-h-[180px]"
-              >
-                <CardHeader className="flex-1 pb-2">
-                  <CardTitle
-                    className="text-lg font-semibold line-clamp-1"
-                    title={summary.title}
-                  >
+              <Card key={summary.id} className="flex flex-col justify-between">
+                <CardHeader>
+                  <CardTitle className="text-lg font-semibold">
                     {summary.title}
                   </CardTitle>
-                  <CardDescription
-                    className="text-slate-500 mt-2 line-clamp-2 cursor-help"
-                    title={summary.content}
-                  >
+                  <CardDescription className="text-slate-300">
                     {summary.content}
                   </CardDescription>
                 </CardHeader>
-
-                <CardFooter className="flex justify-end gap-2 pt-0 pb-4">
+                <CardFooter className="flex justify-end gap-2">
                   <Button
                     variant="outline"
                     size="sm"
@@ -175,22 +186,27 @@ const Summaries = () => {
               selectedSummary ? `edit-${selectedSummary.id}` : 'create-summary'
             }
             open={isModalOpen}
-            onOpenChange={setIsModalOpen}
+            onOpenChange={handleModalOpenChange}
             title={selectedSummary ? 'Editar Resumen' : 'Nuevo Resumen'}
             fields={SUMMARY_FIELDS}
             initialData={selectedSummary}
+            schema={summarySchema}
             onSubmit={handleSubmit}
+            error={createMutation.error || updateMutation.error}
             isLoading={createMutation.isPending || updateMutation.isPending}
           />
 
           <FormModal
             key={
-              selectedSummary
-                ? `delete-${selectedSummary.id}`
-                : 'delete-summary'
+              isDeleteModalOpen
+                ? `delete-${selectedSummary?.id}`
+                : 'delete-closed'
             }
             open={isDeleteModalOpen}
-            onOpenChange={setIsDeleteModalOpen}
+            onOpenChange={(isOpen) => {
+              setIsDeleteModalOpen(isOpen);
+              if (!isOpen) setSelectedSummary(null);
+            }}
             title={`¿Deseas eliminar el resumen "${selectedSummary?.title}"?`}
             fields={[]}
             onSubmit={handleDeleteSubmit}
