@@ -7,6 +7,7 @@ import {
   useDeleteCourseSubscription,
 } from '../../hooks/useCourseSubscriptions';
 import FormModal from '../../components/FormModal';
+import { courseSubscriptionSchema } from '../../schemas/courseSubscription';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -58,6 +59,15 @@ const CourseSubscriptions = () => {
     setIsDeleteModalOpen(true);
   };
 
+  const handleModalOpenChange = (isOpen) => {
+    setIsModalOpen(isOpen);
+    if (!isOpen) {
+      createMutation.reset();
+      updateMutation.reset();
+      setSelectedSub(null);
+    }
+  };
+
   const handleSubmit = (formData) => {
     const payload = {
       courseId: Number(formData.courseId),
@@ -69,11 +79,20 @@ const CourseSubscriptions = () => {
     if (selectedSub) {
       updateMutation.mutate(
         { id: selectedSub.id, data: payload },
-        { onSuccess: () => setIsModalOpen(false) }
+        {
+          onSuccess: () => {
+            setIsModalOpen(false);
+            updateMutation.reset();
+            setSelectedSub(null);
+          },
+        }
       );
     } else {
       createMutation.mutate(payload, {
-        onSuccess: () => setIsModalOpen(false),
+        onSuccess: () => {
+          setIsModalOpen(false);
+          createMutation.reset();
+        },
       });
     }
   };
@@ -81,7 +100,11 @@ const CourseSubscriptions = () => {
   const handleDeleteSubmit = () => {
     if (!selectedSub) return;
     deleteMutation.mutate(selectedSub.id, {
-      onSuccess: () => setIsDeleteModalOpen(false),
+      onSuccess: () => {
+        setIsDeleteModalOpen(false);
+        deleteMutation.reset();
+        setSelectedSub(null);
+      },
     });
   };
 
@@ -170,22 +193,27 @@ const CourseSubscriptions = () => {
           <FormModal
             key={selectedSub ? `edit-${selectedSub.id}` : 'create-subscription'}
             open={isModalOpen}
-            onOpenChange={setIsModalOpen}
+            onOpenChange={handleModalOpenChange}
             title={
               selectedSub ? 'Editar Suscripción' : 'Nueva Suscripción a Curso'
             }
             fields={SUBSCRIPTION_FIELDS}
             initialData={selectedSub}
+            schema={courseSubscriptionSchema}
             onSubmit={handleSubmit}
+            error={createMutation.error || updateMutation.error}
             isLoading={createMutation.isPending || updateMutation.isPending}
           />
 
           <FormModal
             key={
-              selectedSub ? `delete-${selectedSub.id}` : 'delete-subscription'
+              isDeleteModalOpen ? `delete-${selectedSub?.id}` : 'delete-closed'
             }
             open={isDeleteModalOpen}
-            onOpenChange={setIsDeleteModalOpen}
+            onOpenChange={(isOpen) => {
+              setIsDeleteModalOpen(isOpen);
+              if (!isOpen) setSelectedSub(null);
+            }}
             title={`¿Deseas dar de baja la suscripción #${selectedSub?.id}?`}
             fields={[]}
             onSubmit={handleDeleteSubmit}

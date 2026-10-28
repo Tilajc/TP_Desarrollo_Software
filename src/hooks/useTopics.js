@@ -7,13 +7,13 @@ import {
   deleteTopic,
 } from '../services/topics';
 
-export const useTopics = (subjectId) => {
+export const useTopics = (subjectId, enabled = true) => {
   const token = localStorage.getItem('token');
 
   return useQuery({
     queryKey: ['topics', subjectId],
     queryFn: () => getTopics(subjectId),
-    enabled: !!token,
+    enabled: !!token && enabled,
     retry: false,
   });
 };

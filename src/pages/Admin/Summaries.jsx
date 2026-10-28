@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useTopic } from '../hooks/useTopics';
+import { useTopic } from '../../hooks/useTopics';
 import {
   useSummaries,
   useCreateSummary,
   useUpdateSummary,
   useDeleteSummary,
-} from '../hooks/useSummaries';
-import FormModal from '../components/FormModal';
+} from '../../hooks/useSummaries';
+import FormModal from '../../components/FormModal';
+import { summarySchema } from '../../schemas/summary';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -63,6 +64,15 @@ const Summaries = () => {
     setIsDeleteModalOpen(true);
   };
 
+  const handleModalOpenChange = (isOpen) => {
+    setIsModalOpen(isOpen);
+    if (!isOpen) {
+      createMutation.reset();
+      updateMutation.reset();
+      setSelectedSummary(null);
+    }
+  };
+
   const handleSubmit = (formData) => {
     const payload = {
       ...formData,
@@ -72,11 +82,20 @@ const Summaries = () => {
     if (selectedSummary) {
       updateMutation.mutate(
         { id: selectedSummary.id, data: payload },
-        { onSuccess: () => setIsModalOpen(false) }
+        {
+          onSuccess: () => {
+            setIsModalOpen(false);
+            updateMutation.reset();
+            setSelectedSummary(null);
+          },
+        }
       );
     } else {
       createMutation.mutate(payload, {
-        onSuccess: () => setIsModalOpen(false),
+        onSuccess: () => {
+          setIsModalOpen(false);
+          createMutation.reset();
+        },
       });
     }
   };
@@ -84,7 +103,11 @@ const Summaries = () => {
   const handleDeleteSubmit = () => {
     if (!selectedSummary) return;
     deleteMutation.mutate(selectedSummary.id, {
-      onSuccess: () => setIsDeleteModalOpen(false),
+      onSuccess: () => {
+        setIsDeleteModalOpen(false);
+        deleteMutation.reset();
+        setSelectedSummary(null);
+      },
     });
   };
 
@@ -163,22 +186,27 @@ const Summaries = () => {
               selectedSummary ? `edit-${selectedSummary.id}` : 'create-summary'
             }
             open={isModalOpen}
-            onOpenChange={setIsModalOpen}
+            onOpenChange={handleModalOpenChange}
             title={selectedSummary ? 'Editar Resumen' : 'Nuevo Resumen'}
             fields={SUMMARY_FIELDS}
             initialData={selectedSummary}
+            schema={summarySchema}
             onSubmit={handleSubmit}
+            error={createMutation.error || updateMutation.error}
             isLoading={createMutation.isPending || updateMutation.isPending}
           />
 
           <FormModal
             key={
-              selectedSummary
-                ? `delete-${selectedSummary.id}`
-                : 'delete-summary'
+              isDeleteModalOpen
+                ? `delete-${selectedSummary?.id}`
+                : 'delete-closed'
             }
             open={isDeleteModalOpen}
-            onOpenChange={setIsDeleteModalOpen}
+            onOpenChange={(isOpen) => {
+              setIsDeleteModalOpen(isOpen);
+              if (!isOpen) setSelectedSummary(null);
+            }}
             title={`¿Deseas eliminar el resumen "${selectedSummary?.title}"?`}
             fields={[]}
             onSubmit={handleDeleteSubmit}

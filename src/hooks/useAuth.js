@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { login, getMe } from '../services/auth';
+import { login, getMe, updateMe } from '../services/auth';
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
@@ -23,5 +23,17 @@ export const useGetMe = () => {
     queryFn: getMe,
     enabled: !!token,
     retry: false,
+  });
+};
+
+export const useUpdateProfile = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (userData) => updateMe(userData),
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: ['auth', 'me'],
+      }),
   });
 };

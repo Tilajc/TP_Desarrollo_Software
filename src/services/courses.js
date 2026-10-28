@@ -1,8 +1,11 @@
 import apiFetch from '../lib/api';
 
-export const getCourses = async (courseId) => {
-  const query = courseId ? `?courseId=${courseId}` : '';
-  return apiFetch(`/courses${query}`);
+export const getCourses = async ({ authorId, subjectId } = {}) => {
+  const params = new URLSearchParams();
+  if (authorId) params.set('authorId', authorId);
+  if (subjectId) params.set('subjectId', subjectId);
+  const query = params.toString();
+  return apiFetch(`/courses${query ? `?${query}` : ''}`);
 };
 
 export const getCourseById = async (id) => {

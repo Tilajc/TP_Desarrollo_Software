@@ -6,13 +6,13 @@ import {
   deleteCard,
 } from '../services/cards';
 
-export const useCards = (topicId) => {
+export const useCards = (topicId, filters = {}, enabled = true) => {
   const token = localStorage.getItem('token');
 
   return useQuery({
-    queryKey: ['cards', topicId],
-    queryFn: () => getCards(topicId),
-    enabled: !!token,
+    queryKey: ['cards', topicId, filters],
+    queryFn: () => getCards(topicId, filters),
+    enabled: !!token && enabled,
     retry: false,
   });
 };

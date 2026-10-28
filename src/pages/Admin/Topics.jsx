@@ -9,6 +9,7 @@ import {
   useDeleteTopic,
 } from '../../hooks/useTopics';
 import FormModal from '../../components/FormModal';
+import { topicSchema } from '../../schemas/topic';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import GetSkeleton from '@/components/GetSkeleton';
@@ -51,16 +52,36 @@ const Topics = () => {
     setIsDeleteModalOpen(true);
   };
 
+  const handleModalOpenChange = (isOpen) => {
+    setIsModalOpen(isOpen);
+    if (!isOpen) {
+      createMutation.reset();
+      updateMutation.reset();
+      setSelectedTopic(null);
+    }
+  };
+
   const handleSubmit = (formData) => {
     if (selectedTopic) {
       updateMutation.mutate(
         { id: selectedTopic.id, data: formData },
-        { onSuccess: () => setIsModalOpen(false) }
+        {
+          onSuccess: () => {
+            setIsModalOpen(false);
+            updateMutation.reset();
+            setSelectedTopic(null);
+          },
+        }
       );
     } else {
       createMutation.mutate(
         { ...formData, subjectId: Number(subjectId) },
-        { onSuccess: () => setIsModalOpen(false) }
+        {
+          onSuccess: () => {
+            setIsModalOpen(false);
+            createMutation.reset();
+          },
+        }
       );
     }
   };
@@ -68,7 +89,11 @@ const Topics = () => {
   const handleDeleteSubmit = () => {
     if (!selectedTopic) return;
     deleteMutation.mutate(selectedTopic.id, {
-      onSuccess: () => setIsDeleteModalOpen(false),
+      onSuccess: () => {
+        setIsDeleteModalOpen(false);
+        deleteMutation.reset();
+        setSelectedTopic(null);
+      },
     });
   };
 
@@ -169,18 +194,25 @@ const Topics = () => {
           <FormModal
             key={selectedTopic ? `edit-${selectedTopic.id}` : 'create-topic'}
             open={isModalOpen}
-            onOpenChange={setIsModalOpen}
+            onOpenChange={handleModalOpenChange}
             title={selectedTopic ? 'Editar Tema' : 'Nuevo Tema'}
             fields={TOPIC_FIELDS}
             initialData={selectedTopic}
+            schema={topicSchema}
             onSubmit={handleSubmit}
+            error={createMutation.error || updateMutation.error}
             isLoading={createMutation.isPending || updateMutation.isPending}
           />
 
           <FormModal
-            key={selectedTopic ? `delete-${selectedTopic.id}` : 'delete-topic'}
+            key={
+              isDeleteModalOpen ? `delete-${selectedTopic?.id}` : 'delete-closed'
+            }
             open={isDeleteModalOpen}
-            onOpenChange={setIsDeleteModalOpen}
+            onOpenChange={(isOpen) => {
+              setIsDeleteModalOpen(isOpen);
+              if (!isOpen) setSelectedTopic(null);
+            }}
             title={`¿Deseas eliminar el tema "${selectedTopic?.name}"?`}
             fields={[]}
             onSubmit={handleDeleteSubmit}
