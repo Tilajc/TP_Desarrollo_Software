@@ -27,6 +27,7 @@ import Profile from './pages/Profile';
 import MyCourses from './pages/MyCourses';
 import MyCourse from './pages/MyCourse';
 import MyCourseTopic from './pages/MyCourseTopic';
+import StudyCourse from './pages/StudyCourse.jsx';
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -107,6 +108,10 @@ const router = createBrowserRouter([
       {
         path: '/my-courses',
         element: <MyCourses />,
+      },
+      {
+        path: '/study',
+        element: <StudyCourse />,
       },
       { path: '/my-courses/:courseId', element: <MyCourse /> },
       {
