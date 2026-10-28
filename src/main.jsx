@@ -24,6 +24,9 @@ import Courses from './pages/Admin/Courses.jsx';
 import CourseSubscriptions from './pages/Admin/CourseSubscriptions';
 import NotFound from './pages/NotFound.jsx';
 import Profile from './pages/Profile';
+import MyCourses from './pages/MyCourses';
+import MyCourse from './pages/MyCourse';
+import MyCourseTopic from './pages/MyCourseTopic';
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -100,6 +103,15 @@ const router = createBrowserRouter([
       {
         path: '/profile',
         element: <Profile />,
+      },
+      {
+        path: '/my-courses',
+        element: <MyCourses />,
+      },
+      { path: '/my-courses/:courseId', element: <MyCourse /> },
+      {
+        path: '/my-courses/:courseId/topics/:topicId',
+        element: <MyCourseTopic />,
       },
     ],
   },

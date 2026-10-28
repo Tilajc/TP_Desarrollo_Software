@@ -98,7 +98,7 @@ const FormModal = ({
                     disabled
                     className="text-gray-500 bg-white dark:bg-zinc-900"
                   >
-                    Seleccione un rol...
+                    {field.placeholder || 'Seleccione una opción...'}
                   </option>
                   {field.options?.map((option) => (
                     <option
@@ -130,6 +130,10 @@ const FormModal = ({
               )}
             </div>
           ))}
+
+          {shownError && !shownError.errors?.length && shownError.message && (
+            <p className="text-sm text-red-700">{shownError.message}</p>
+          )}
 
           <DialogFooter className="pt-2">
             <Button

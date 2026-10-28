@@ -1,8 +1,12 @@
 import apiFetch from '../lib/api';
 
-export const getCards = async (topicId) => {
-  const query = topicId ? `?topicId=${topicId}` : '';
-  return apiFetch(`/cards${query}`);
+export const getCards = async (topicId, { authorId, subjectId } = {}) => {
+  const params = new URLSearchParams();
+  if (topicId) params.set('topicId', topicId);
+  if (authorId) params.set('authorId', authorId);
+  if (subjectId) params.set('subjectId', subjectId);
+  const query = params.toString();
+  return apiFetch(`/cards${query ? `?${query}` : ''}`);
 };
 
 export const createCard = async (cardData) => {

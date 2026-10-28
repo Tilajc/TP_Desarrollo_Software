@@ -50,6 +50,7 @@ const getFields = (isEditing) => [
     name: 'role',
     label: 'Rol',
     type: 'select',
+    placeholder: 'Seleccione un rol...',
     options: [
       { label: 'Usuario', value: 'USER' },
       { label: 'Administrador', value: 'ADMIN' },

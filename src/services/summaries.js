@@ -1,8 +1,12 @@
 import apiFetch from '../lib/api';
 
-export const getSummaries = async (topicId) => {
-  const query = topicId ? `?topicId=${topicId}` : '';
-  return apiFetch(`/summaries${query}`);
+export const getSummaries = async (topicId, { authorId, subjectId } = {}) => {
+  const params = new URLSearchParams();
+  if (topicId) params.set('topicId', topicId);
+  if (authorId) params.set('authorId', authorId);
+  if (subjectId) params.set('subjectId', subjectId);
+  const query = params.toString();
+  return apiFetch(`/summaries${query ? `?${query}` : ''}`);
 };
 
 export const createSummary = async (summaryData) => {

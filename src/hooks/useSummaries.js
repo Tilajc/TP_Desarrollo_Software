@@ -6,13 +6,13 @@ import {
   deleteSummary,
 } from '../services/summaries';
 
-export const useSummaries = (topicId) => {
+export const useSummaries = (topicId, filters = {}, enabled = true) => {
   const token = localStorage.getItem('token');
 
   return useQuery({
-    queryKey: ['summaries', topicId],
-    queryFn: () => getSummaries(topicId),
-    enabled: !!token,
+    queryKey: ['summaries', topicId, filters],
+    queryFn: () => getSummaries(topicId, filters),
+    enabled: !!token && enabled,
     retry: false,
   });
 };

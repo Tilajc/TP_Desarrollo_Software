@@ -35,11 +35,6 @@ const MENU_ITEMS = [
     roles: ['USER'],
   },
   {
-    title: 'Resumen',
-    to: '/summaries',
-    roles: ['USER'],
-  },
-  {
     title: 'Usuarios',
     to: '/users',
     roles: ['ADMIN'],
@@ -50,9 +45,9 @@ const MENU_ITEMS = [
     roles: ['ADMIN'],
   },
   {
-    title: 'Inscripciones',
-    to: '/admin/course-subscriptions',
-    roles: ['ADMIN'],
+    title: 'Mis Cursos',
+    to: '/my-courses',
+    roles: ['USER'],
   },
 ];
 

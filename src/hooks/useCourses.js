@@ -1,18 +1,30 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   getCourses,
+  getCourseById,
   createCourse,
   updateCourse,
   deleteCourse,
 } from '../services/courses';
 
-export const useCourses = (courseId) => {
+export const useCourses = (filters = {}, enabled = true) => {
   const token = localStorage.getItem('token');
 
   return useQuery({
-    queryKey: ['courses', courseId],
-    queryFn: () => getCourses(courseId),
-    enabled: !!token,
+    queryKey: ['courses', filters],
+    queryFn: () => getCourses(filters),
+    enabled: !!token && enabled,
+    retry: false,
+  });
+};
+
+export const useCourse = (id) => {
+  const token = localStorage.getItem('token');
+
+  return useQuery({
+    queryKey: ['courses', 'detail', id],
+    queryFn: () => getCourseById(id),
+    enabled: !!token && !!id,
     retry: false,
   });
 };
