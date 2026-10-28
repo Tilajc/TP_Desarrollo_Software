@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Layers,
   BookOpen,
@@ -7,7 +6,7 @@ import {
   CheckCircle2,
   RotateCcw,
   Eye,
-  ChevronRight,
+  GraduationCap,
 } from 'lucide-react';
 import { useCourseSubscriptions } from '@/hooks/useCourseSubscriptions';
 import { useTopics } from '@/hooks/useTopics';
@@ -24,7 +23,7 @@ import {
 } from '@/components/ui/card';
 import GetSkeleton from '@/components/GetSkeleton';
 
-// Subcomponente: Reproductor y respuesta interactiva de tarjetas
+// --- VISOR Y RESPUESTA DE TARJETAS ---
 const FlashcardPlayer = ({ cards }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
@@ -35,9 +34,9 @@ const FlashcardPlayer = ({ cards }) => {
 
   if (!cards || cards.length === 0) {
     return (
-      <div className="p-8 text-center bg-slate-50 border rounded-xl text-slate-500">
-        No hay tarjetas disponibles en este tema todavía.
-      </div>
+      <p className="text-slate-400 py-6">
+        Este tema todavía no tiene tarjetas cargadas por el docente.
+      </p>
     );
   }
 
@@ -71,63 +70,68 @@ const FlashcardPlayer = ({ cards }) => {
 
   if (finished) {
     return (
-      <div className="p-8 max-w-md mx-auto text-center border rounded-2xl shadow-sm bg-white">
-        <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
-        <h3 className="text-2xl font-bold mb-2">¡Repaso terminado!</h3>
-        <p className="text-slate-600 mb-6">
+      <Card className="max-w-lg mx-auto text-center p-6 border-slate-800">
+        <CheckCircle2 className="w-14 h-14 text-emerald-500 mx-auto mb-3" />
+        <h3 className="text-2xl font-bold text-white mb-2">
+          ¡Repaso finalizado!
+        </h3>
+        <p className="text-slate-400 text-sm mb-6">
           Completaste las {cards.length} tarjetas de este tema.
         </p>
+
         <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-lg">
-            <span className="text-2xl font-bold text-emerald-600">
+          <div className="bg-emerald-950/40 border border-emerald-800/60 p-4 rounded-xl">
+            <span className="text-3xl font-bold text-emerald-400">
               {score.correct}
             </span>
-            <p className="text-xs text-emerald-800">Aprendidas</p>
+            <p className="text-xs text-emerald-300 mt-1">Aprendidas</p>
           </div>
-          <div className="bg-amber-50 border border-amber-200 p-3 rounded-lg">
-            <span className="text-2xl font-bold text-amber-600">
+          <div className="bg-amber-950/40 border border-amber-800/60 p-4 rounded-xl">
+            <span className="text-3xl font-bold text-amber-400">
               {score.review}
             </span>
-            <p className="text-xs text-amber-800">Para repasar</p>
+            <p className="text-xs text-amber-300 mt-1">Para repasar</p>
           </div>
         </div>
+
         <Button
           onClick={handleRestart}
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
         >
-          <RotateCcw className="w-4 h-4 mr-2" /> Volver a practicar
+          <RotateCcw className="w-4 h-4 mr-2" /> Volver a repasar
         </Button>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="max-w-xl mx-auto space-y-4">
-      <div className="flex justify-between items-center text-sm text-slate-500">
+    <div className="max-w-2xl mx-auto space-y-4">
+      <div className="flex justify-between items-center text-xs text-slate-400 px-1">
         <span>
           Tarjeta {currentIndex + 1} de {cards.length}
         </span>
-        <span>
-          Aciertos: {score.correct} | Repasar: {score.review}
+        <span className="space-x-3">
+          <span className="text-emerald-400">Sabidas: {score.correct}</span>
+          <span className="text-amber-400">Repasar: {score.review}</span>
         </span>
       </div>
 
-      <Card className="min-h-[300px] flex flex-col justify-between shadow-md">
+      <Card className="min-h-75 flex flex-col justify-between">
         <CardHeader>
-          <span className="text-xs font-semibold tracking-wider text-blue-600 uppercase">
+          <span className="text-xs font-semibold tracking-wider text-blue-500 uppercase">
             Pregunta
           </span>
-          <CardTitle className="text-xl mt-1 leading-snug">
+          <CardTitle className="text-xl font-bold mt-1 leading-snug">
             {currentCard.question}
           </CardTitle>
 
           {hint && (
             <div className="mt-3">
               {showHint ? (
-                <div className="flex items-start gap-2 text-xs bg-sky-50 border border-sky-200 text-sky-900 px-3 py-2 rounded-lg">
-                  <Lightbulb className="w-4 h-4 shrink-0 text-sky-600 mt-0.5" />
+                <div className="flex items-start gap-2 text-xs bg-sky-950/30 border border-sky-800 text-sky-200 px-3 py-2 rounded-lg">
+                  <Lightbulb className="w-4 h-4 shrink-0 text-sky-400 mt-0.5" />
                   <div>
-                    <strong>Pista:</strong> {hint}
+                    <strong className="text-sky-300">Pista:</strong> {hint}
                   </div>
                 </div>
               ) : (
@@ -135,7 +139,7 @@ const FlashcardPlayer = ({ cards }) => {
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowHint(true)}
-                  className="text-xs text-sky-600 hover:text-sky-700 h-7 px-2"
+                  className="text-xs text-sky-400 hover:text-sky-300 h-7 px-2 cursor-pointer"
                 >
                   <Lightbulb className="w-3.5 h-3.5 mr-1" /> Ver pista
                 </Button>
@@ -147,35 +151,35 @@ const FlashcardPlayer = ({ cards }) => {
         <CardContent className="space-y-4">
           {!showAnswer && (
             <div>
-              <label className="text-xs font-medium text-slate-600 mb-1 block">
+              <label className="text-xs text-slate-400 mb-1.5 block">
                 Tu respuesta (opcional):
               </label>
               <textarea
                 value={userAnswer}
                 onChange={(e) => setUserAnswer(e.target.value)}
                 placeholder="Escribí lo que recuerdes antes de comprobar..."
-                className="w-full p-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none h-20"
+                className="w-full p-3 text-sm bg-slate-900/50 border border-slate-800 rounded-lg text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-blue-500 resize-none h-20"
               />
             </div>
           )}
 
           {showAnswer && (
-            <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-2">
-              <span className="text-xs font-semibold tracking-wider text-emerald-600 uppercase">
-                Respuesta correcta
+            <div className="bg-slate-900/60 border border-slate-800 rounded-lg p-4 space-y-1.5">
+              <span className="text-xs font-semibold tracking-wider text-emerald-400 uppercase">
+                Respuesta
               </span>
-              <p className="text-slate-800 text-base leading-relaxed">
+              <p className="text-slate-200 text-base leading-relaxed whitespace-pre-wrap">
                 {currentCard.answer}
               </p>
             </div>
           )}
         </CardContent>
 
-        <CardFooter className="pt-2 border-t flex gap-2 justify-between">
+        <CardFooter className="pt-3 border-t border-slate-800/60 flex gap-3">
           {!showAnswer ? (
             <Button
               onClick={() => setShowAnswer(true)}
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
             >
               <Eye className="w-4 h-4 mr-2" /> Mostrar Respuesta
             </Button>
@@ -184,13 +188,13 @@ const FlashcardPlayer = ({ cards }) => {
               <Button
                 variant="outline"
                 onClick={() => handleNext(false)}
-                className="w-1/2 border-amber-300 text-amber-700 hover:bg-amber-50"
+                className="w-1/2 border-amber-600/50 text-amber-400 hover:bg-amber-950/30 cursor-pointer"
               >
                 Necesito repasar
               </Button>
               <Button
                 onClick={() => handleNext(true)}
-                className="w-1/2 bg-emerald-500 hover:bg-emerald-600 text-white"
+                className="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer"
               >
                 ¡La sabía!
               </Button>
@@ -202,27 +206,26 @@ const FlashcardPlayer = ({ cards }) => {
   );
 };
 
-// Subcomponente: Visor de resúmenes
+// --- VISOR DE RESÚMENES ---
 const SummariesViewer = ({ summaries }) => {
   if (!summaries || summaries.length === 0) {
     return (
-      <div className="p-8 text-center bg-slate-50 border rounded-xl text-slate-500">
-        No hay resúmenes publicados para este tema todavía.
-      </div>
+      <p className="text-slate-400 py-6">
+        Este tema todavía no tiene resúmenes cargados por el docente.
+      </p>
     );
   }
 
   return (
-    <div className="space-y-4 max-w-3xl mx-auto">
+    <div className="space-y-4 max-w-3xl">
       {summaries.map((summary) => (
-        <Card key={summary.id} className="shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-xl text-slate-900">
+        <Card key={summary.id}>
+          <CardHeader className="p-5">
+            <CardTitle className="text-lg font-bold leading-snug">
               {summary.title}
             </CardTitle>
             {summary.date && (
-              <p className="text-xs text-slate-400">
-                Publicado el{' '}
+              <p className="text-xs text-slate-500">
                 {new Date(summary.date).toLocaleDateString('es-AR', {
                   day: '2-digit',
                   month: 'long',
@@ -230,29 +233,27 @@ const SummariesViewer = ({ summaries }) => {
                 })}
               </p>
             )}
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm leading-relaxed whitespace-pre-wrap text-slate-700">
+            <CardDescription className="text-sm leading-relaxed whitespace-pre-wrap text-slate-300 mt-2">
               {summary.content}
-            </p>
-          </CardContent>
+            </CardDescription>
+          </CardHeader>
         </Card>
       ))}
     </div>
   );
 };
 
-// Componente principal del Caso de Uso (CUU3)
+// --- PÁGINA PRINCIPAL ---
 const StudyCourse = () => {
   const [selectedSubjectId, setSelectedSubjectId] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [selectedTopic, setSelectedTopic] = useState(null);
-  const [mode, setMode] = useState(null); // 'cards' | 'summaries'
+  const [mode, setMode] = useState('cards');
 
   const { data: subscriptions, isLoading: subsLoading } =
     useCourseSubscriptions();
 
-  // Materias de los cursos en los que el alumno está inscripto
+  // Materias únicas de los cursos suscriptos
   const subjects = useMemo(() => {
     if (!subscriptions) return [];
     const map = new Map();
@@ -265,7 +266,7 @@ const StudyCourse = () => {
     return Array.from(map.values());
   }, [subscriptions]);
 
-  // Cursos suscriptos de la materia elegida
+  // Cursos de la materia seleccionada
   const filteredCourses = useMemo(() => {
     if (!subscriptions || !selectedSubjectId) return [];
     return subscriptions
@@ -273,13 +274,13 @@ const StudyCourse = () => {
       .map((sub) => sub.course);
   }, [subscriptions, selectedSubjectId]);
 
-  // Temas de la materia del curso elegido
+  // Temas de la materia del curso
   const { data: topics, isLoading: topicsLoading } = useTopics(
     selectedCourse?.subjectId,
     !!selectedCourse
   );
 
-  // Tarjetas y resúmenes hechos por el creador del curso
+  // Tarjetas y resúmenes del docente
   const { data: cards, isLoading: cardsLoading } = useCards(selectedTopic?.id, {
     authorId: selectedCourse?.authorId,
   });
@@ -292,71 +293,63 @@ const StudyCourse = () => {
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Aprender y Practicar</h1>
-        <p className="text-slate-500 mt-1">
-          Accedé a los resúmenes y respondé tarjetas de tus cursos suscriptos.
+      {selectedTopic ? (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setSelectedTopic(null)}
+          className="cursor-pointer mb-2 text-slate-300 hover:text-white"
+        >
+          ← Volver a temas
+        </Button>
+      ) : selectedCourse ? (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setSelectedCourse(null)}
+          className="cursor-pointer mb-2 text-slate-300 hover:text-white"
+        >
+          ← Volver a cursos
+        </Button>
+      ) : selectedSubjectId ? (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setSelectedSubjectId(null)}
+          className="cursor-pointer mb-2 text-slate-300 hover:text-white"
+        >
+          ← Volver a materias
+        </Button>
+      ) : null}
+
+      <div className="mb-6">
+        <div className="flex items-center gap-3">
+          <GraduationCap className="w-8 h-8 text-blue-500" />
+          <h1 className="text-3xl font-bold tracking-tight text-white">
+            {selectedTopic
+              ? selectedTopic.name
+              : selectedCourse
+                ? selectedCourse.subject?.name
+                : selectedSubjectId
+                  ? 'Elegí un Curso'
+                  : 'Mis Cursos Suscriptos'}
+          </h1>
+        </div>
+        <p className="text-slate-400 mt-1">
+          {selectedTopic
+            ? `Curso dictado por ${selectedCourse.author?.name || 'Docente'} ${selectedCourse.author?.lastName || ''}`
+            : selectedCourse
+              ? 'Seleccioná un tema para estudiar'
+              : selectedSubjectId
+                ? 'Cursos disponibles en esta materia a los que te suscribiste'
+                : 'Elegí una materia para acceder a tus contenidos de estudio'}
         </p>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500 bg-slate-50 p-3 rounded-lg border">
-        <button
-          onClick={() => {
-            setSelectedSubjectId(null);
-            setSelectedCourse(null);
-            setSelectedTopic(null);
-            setMode(null);
-          }}
-          className={`hover:underline ${!selectedSubjectId ? 'font-bold text-blue-600' : ''}`}
-        >
-          1. Materias
-        </button>
-        {selectedSubjectId && (
-          <>
-            <ChevronRight className="w-4 h-4 text-slate-400" />
-            <button
-              onClick={() => {
-                setSelectedCourse(null);
-                setSelectedTopic(null);
-                setMode(null);
-              }}
-              className={`hover:underline ${!selectedCourse ? 'font-bold text-blue-600' : ''}`}
-            >
-              2. Cursos
-            </button>
-          </>
-        )}
-        {selectedCourse && (
-          <>
-            <ChevronRight className="w-4 h-4 text-slate-400" />
-            <button
-              onClick={() => {
-                setSelectedTopic(null);
-                setMode(null);
-              }}
-              className={`hover:underline ${!selectedTopic ? 'font-bold text-blue-600' : ''}`}
-            >
-              3. Temas
-            </button>
-          </>
-        )}
-        {selectedTopic && (
-          <>
-            <ChevronRight className="w-4 h-4 text-slate-400" />
-            <span className="font-bold text-blue-600">
-              4. {mode === 'cards' ? 'Tarjetas' : 'Resúmenes'}
-            </span>
-          </>
-        )}
-      </div>
-
       {!selectedSubjectId && (
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">
-            Paso 1: Seleccioná la materia
-          </h2>
+        <>
           {subjects.length === 0 ? (
-            <p className="text-slate-500">
+            <p className="text-slate-400">
               Todavía no estás inscripto en ningún curso.
             </p>
           ) : (
@@ -365,94 +358,77 @@ const StudyCourse = () => {
                 <Card
                   key={sub.id}
                   onClick={() => setSelectedSubjectId(sub.id)}
-                  className="cursor-pointer hover:border-blue-500 hover:shadow-md transition-all"
+                  className="cursor-pointer hover:border-blue-500/80 transition-colors flex flex-col justify-between"
                 >
                   <CardHeader>
-                    <CardTitle>{sub.name}</CardTitle>
+                    <CardTitle className="text-lg font-semibold text-white">
+                      {sub.name}
+                    </CardTitle>
                     {sub.description && (
-                      <CardDescription>{sub.description}</CardDescription>
+                      <CardDescription className="text-slate-400 text-sm mt-1">
+                        {sub.description}
+                      </CardDescription>
                     )}
                   </CardHeader>
                 </Card>
               ))}
             </div>
           )}
-        </div>
+        </>
       )}
 
       {selectedSubjectId && !selectedCourse && (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold">
-              Paso 2: Elegí el curso suscripto
-            </h2>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSelectedSubjectId(null)}
-            >
-              ← Cambiar materia
-            </Button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredCourses.map((c) => (
-              <Card
-                key={c.id}
-                onClick={() => setSelectedCourse(c)}
-                className="cursor-pointer hover:border-blue-500 hover:shadow-md transition-all"
-              >
-                <CardHeader>
-                  <CardTitle>{c.subject?.name || `Curso #${c.id}`}</CardTitle>
-                  <CardDescription>
-                    Profesor: {c.author?.name} {c.author?.lastName}
-                  </CardDescription>
-                </CardHeader>
-                <CardFooter>
-                  <Button
-                    size="sm"
-                    className="w-full bg-blue-500 text-white hover:bg-blue-600"
-                  >
-                    Ver Contenido
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredCourses.map((c) => (
+            <Card key={c.id} className="flex flex-col justify-between">
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold text-white">
+                  {c.subject?.name}
+                </CardTitle>
+                <CardDescription className="text-slate-400 text-sm">
+                  Docente: {c.author?.name} {c.author?.lastName}
+                </CardDescription>
+              </CardHeader>
+              <CardFooter>
+                <Button
+                  size="sm"
+                  onClick={() => setSelectedCourse(c)}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
+                >
+                  Abrir curso
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
         </div>
       )}
 
       {selectedCourse && !selectedTopic && (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold">
-              Paso 3: Elegí el tema que querés estudiar
-            </h2>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSelectedCourse(null)}
-            >
-              ← Cambiar curso
-            </Button>
-          </div>
+        <>
           {topicsLoading ? (
             <GetSkeleton />
+          ) : topics?.length === 0 ? (
+            <p className="text-slate-400">
+              Esta materia todavía no tiene temas creados.
+            </p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {topics?.map((topic) => (
-                <Card
-                  key={topic.id}
-                  onClick={() => {
-                    setSelectedTopic(topic);
-                    setMode('cards');
-                  }}
-                  className="cursor-pointer hover:border-blue-500 hover:shadow-md transition-all"
-                >
+                <Card key={topic.id} className="flex flex-col justify-between">
                   <CardHeader>
-                    <CardTitle>{topic.name}</CardTitle>
+                    <CardTitle className="text-lg font-semibold text-white">
+                      {topic.name}
+                    </CardTitle>
                   </CardHeader>
                   <CardFooter>
-                    <Button size="sm" variant="outline" className="w-full">
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        setSelectedTopic(topic);
+                        setMode('cards');
+                      }}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
+                    >
                       Estudiar tema
                     </Button>
                   </CardFooter>
@@ -460,42 +436,34 @@ const StudyCourse = () => {
               ))}
             </div>
           )}
-        </div>
+        </>
       )}
 
       {selectedTopic && (
         <div className="space-y-6">
-          <div className="flex flex-wrap justify-between items-center gap-4 border-b pb-4">
-            <div>
-              <h2 className="text-2xl font-bold">{selectedTopic.name}</h2>
-              <p className="text-sm text-slate-500">
-                Curso de {selectedCourse.subject?.name}
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant={mode === 'cards' ? 'default' : 'outline'}
-                onClick={() => setMode('cards')}
-                className={
-                  mode === 'cards'
-                    ? 'bg-blue-500 hover:bg-blue-600 text-white'
-                    : ''
-                }
-              >
-                <Layers className="w-4 h-4 mr-2" /> Responder Tarjetas
-              </Button>
-              <Button
-                variant={mode === 'summaries' ? 'default' : 'outline'}
-                onClick={() => setMode('summaries')}
-                className={
-                  mode === 'summaries'
-                    ? 'bg-blue-500 hover:bg-blue-600 text-white'
-                    : ''
-                }
-              >
-                <BookOpen className="w-4 h-4 mr-2" /> Ver Resúmenes
-              </Button>
-            </div>
+          <div className="flex gap-2">
+            <Button
+              variant={mode === 'cards' ? 'default' : 'outline'}
+              onClick={() => setMode('cards')}
+              className={
+                mode === 'cards'
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
+                  : 'cursor-pointer text-slate-300'
+              }
+            >
+              <Layers className="w-4 h-4 mr-2" /> Tarjetas
+            </Button>
+            <Button
+              variant={mode === 'summaries' ? 'default' : 'outline'}
+              onClick={() => setMode('summaries')}
+              className={
+                mode === 'summaries'
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
+                  : 'cursor-pointer text-slate-300'
+              }
+            >
+              <BookOpen className="w-4 h-4 mr-2" /> Resúmenes
+            </Button>
           </div>
 
           {mode === 'cards' ? (
