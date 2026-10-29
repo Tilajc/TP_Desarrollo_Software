@@ -8,9 +8,9 @@ import {
 
 import { Link, useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 
 import useLoginStatus from '../store/useLoginStatus';
-
 import { useGetMe } from '../hooks/useAuth';
 
 const MENU_ITEMS = [
@@ -18,11 +18,6 @@ const MENU_ITEMS = [
     title: 'Inicio',
     to: '/',
     roles: ['ADMIN', 'USER'],
-  },
-  {
-    title: 'Alumnos',
-    to: '/students',
-    roles: ['USER'],
   },
   {
     title: 'Materias',
@@ -53,11 +48,10 @@ const MENU_ITEMS = [
 
 const AppSidebar = () => {
   const { isLoggedIn, logout } = useLoginStatus();
-
   const { data: user } = useGetMe();
   const { setOpenMobile } = useSidebar();
-
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const userRole = user?.role ? user.role.toUpperCase() : 'USER';
 
@@ -71,9 +65,8 @@ const AppSidebar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-
+    queryClient.clear(); // Limpia la caché en memoria para que Home detecte el cierre al instante
     logout();
-
     navigate('/');
   };
 
@@ -114,12 +107,13 @@ const AppSidebar = () => {
                 >
                   Mi Perfil
                 </Link>
-                <Link
+                <button
+                  type="button"
                   className="w-full text-left block p-2 text-md font-semibold text-red-400 hover:text-red-300 hover:bg-slate-800 rounded transition-colors cursor-pointer"
                   onClick={handleLogout}
                 >
                   Cerrar Sesión
-                </Link>
+                </button>
               </div>
             ) : (
               <div className="flex flex-col gap-1">
@@ -128,6 +122,7 @@ const AppSidebar = () => {
                   className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
                   onClick={() => {
                     localStorage.removeItem('token');
+                    queryClient.clear();
                   }}
                 >
                   Iniciar Sesión
