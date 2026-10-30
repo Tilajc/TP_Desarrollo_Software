@@ -27,7 +27,6 @@ import {
 } from '../components/ui/card';
 import GetSkeleton from '../components/GetSkeleton';
 
-// --- VISTA 1: INVITADO / PÚBLICA ---
 const GuestHome = () => {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 max-w-5xl mx-auto space-y-16">
@@ -75,7 +74,6 @@ const GuestHome = () => {
   );
 };
 
-// --- VISTA 2: ADMINISTRADOR  ---
 const AdminHome = ({ user }) => {
   const { data: subjects, isLoading: loadingSubjects } = useSubjects();
   const { data: courses, isLoading: loadingCourses } = useCourses();
@@ -85,7 +83,6 @@ const AdminHome = ({ user }) => {
   const totalCourses = courses?.length || 0;
   const totalUsers = users?.length || 0;
 
-  // Solo métricas reales conectadas al backend
   const metrics = [
     {
       title: 'Usuarios registrados',
@@ -119,7 +116,6 @@ const AdminHome = ({ user }) => {
         </p>
       </div>
 
-      {/* Métricas reales distribuidas en 3 columnas */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {metrics.map((metric, idx) => (
           <Card
@@ -139,7 +135,6 @@ const AdminHome = ({ user }) => {
         ))}
       </div>
 
-      {/* Botonera de acciones rápidas con cursor-pointer explícito */}
       <Card className="bg-slate-900 border-slate-800 p-5">
         <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
           Acciones rápidas
@@ -174,7 +169,6 @@ const AdminHome = ({ user }) => {
         </div>
       </Card>
 
-      {/* Grid: Estado del Catálogo (60%) vs Cursos (40%) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="col-span-1 lg:col-span-2 bg-slate-900 border-slate-800 text-slate-50">
           <CardHeader className="p-6 pb-2 flex flex-row items-center justify-between">
@@ -294,22 +288,18 @@ const AdminHome = ({ user }) => {
   );
 };
 
-// --- VISTA 3: ALUMNO / ESTUDIANTE (CON DATOS 100% REALES DEL BACKEND) ---
 const StudentHome = ({ user }) => {
   const { data: myCourses, isLoading: loadingMyCourses } = useCourses(
     { authorId: user?.id },
     !!user?.id
   );
 
-  // 1. Total de cursos creados
   const totalMyCourses = myCourses?.length || 0;
 
-  // 2. Materias activas únicas (evita contar materias repetidas si tiene 2 cursos de la misma)
   const uniqueSubjectsCount = myCourses
     ? new Set(myCourses.map((c) => c.subjectId).filter(Boolean)).size
     : 0;
 
-  // 3. Total real de suscriptores acumulados en todos sus cursos
   const totalSubscribers = myCourses
     ? myCourses.reduce(
         (acc, curr) => acc + (curr._count?.courseSubscriptions || 0),
@@ -337,7 +327,6 @@ const StudentHome = ({ user }) => {
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-8">
-      {/* Encabezado con 'Entrar a Estudiar' */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold text-white tracking-tight">
@@ -348,14 +337,13 @@ const StudentHome = ({ user }) => {
           </p>
         </div>
 
-        <Link to="/cards">
+        <Link to="/study">
           <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 cursor-pointer shadow-lg shadow-blue-500/20 transition-transform hover:scale-105 active:scale-95">
             <BrainCircuit className="w-4 h-4 mr-2" /> Entrar a Estudiar
           </Button>
         </Link>
       </div>
 
-      {/* Fila de Métricas 100% reales */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {metrics.map((metric, idx) => (
           <Card
@@ -375,9 +363,7 @@ const StudentHome = ({ user }) => {
         ))}
       </div>
 
-      {/* Grid Principal */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Mis Materias / Cursos */}
         <Card className="col-span-1 lg:col-span-2 bg-slate-900 border-slate-800 text-slate-50">
           <CardHeader className="p-6 pb-2 flex flex-row items-center justify-between">
             <div>
@@ -446,7 +432,6 @@ const StudentHome = ({ user }) => {
           </CardContent>
         </Card>
 
-        {/* Panel lateral: Cursos y Apuntes */}
         <Card className="bg-slate-900 border-slate-800 text-slate-50 flex flex-col justify-between">
           <CardHeader className="p-6 pb-2">
             <CardTitle className="text-lg font-bold text-white flex items-center gap-2">
@@ -492,7 +477,6 @@ const StudentHome = ({ user }) => {
   );
 };
 
-// --- COMPONENTE ROUTER PRINCIPAL DE HOME ---
 const Home = () => {
   const { isLoggedIn } = useLoginStatus();
   const token = localStorage.getItem('token');
