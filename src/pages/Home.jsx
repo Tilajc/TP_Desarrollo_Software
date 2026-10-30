@@ -34,10 +34,11 @@ const GuestHome = () => {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 max-w-5xl mx-auto space-y-16">
       {/* Hero Section */}
+
       <div className="text-center space-y-6 max-w-3xl">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-500/40 bg-blue-950/50 text-blue-400 text-xs sm:text-sm font-bold uppercase tracking-wider shadow-[0_0_20px_rgba(59,130,246,0.2)]">
           <GraduationCap className="w-4 h-4 text-blue-400" />
-          <span>Study Buddy</span>
+          <span>Study Buddies</span>
           <Sparkles className="w-3.5 h-3.5 text-blue-300 ml-0.5" />
         </div>
 

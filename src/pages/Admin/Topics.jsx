@@ -8,6 +8,7 @@ import {
   useUpdateTopic,
   useDeleteTopic,
 } from '../../hooks/useTopics';
+import { useGetMe } from '../../hooks/useAuth';
 import FormModal from '../../components/FormModal';
 import { topicSchema } from '../../schemas/topic';
 import { Button } from '@/components/ui/button';
@@ -32,6 +33,8 @@ const Topics = () => {
   const createMutation = useCreateTopic();
   const updateMutation = useUpdateTopic();
   const deleteMutation = useDeleteTopic();
+  const { data: me } = useGetMe();
+  const isAdmin = me?.role === 'ADMIN';
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -115,12 +118,14 @@ const Topics = () => {
         <h1 className="text-3xl font-bold">
           Temas{subject ? ` de ${subject.name}` : ''}
         </h1>
-        <Button
-          onClick={handleOpenCreate}
-          className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
-        >
-          + Crear Tema
-        </Button>
+        {isAdmin && (
+          <Button
+            onClick={handleOpenCreate}
+            className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
+          >
+            + Crear Tema
+          </Button>
+        )}
       </div>
 
       {isLoading ? (
@@ -139,53 +144,58 @@ const Topics = () => {
                 key={topic.id}
                 className="flex flex-col justify-between relative"
               >
-                <div className="absolute right-0 top-0 z-10 flex gap-2 p-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleOpenEdit(topic)}
-                    className="cursor-pointer"
-                  >
-                    <Pencil />
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleOpenDelete(topic)}
-                    className="cursor-pointer"
-                  >
-                    <X />
-                  </Button>
-                </div>
-
+                {isAdmin && (
+                  <div className="absolute right-0 top-0 z-10 flex gap-2 p-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleOpenEdit(topic)}
+                      className="cursor-pointer"
+                    >
+                      <Pencil />
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleOpenDelete(topic)}
+                      className="cursor-pointer"
+                    >
+                      <X />
+                    </Button>
+                  </div>
+                )}
                 <CardHeader>
                   <CardTitle className="mr-10">{topic.name}</CardTitle>
                 </CardHeader>
                 <CardFooter className="flex justify-between items-center">
-                  <Button
-                    size="sm"
-                    onClick={() =>
-                      navigate(
-                        `/subjects/${subject.id}/topics/${topic.id}/summaries`
-                      )
-                    }
-                    className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
-                  >
-                    <FileText />
-                    Resumenes
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={() =>
-                      navigate(
-                        `/subjects/${subject.id}/topics/${topic.id}/cards`
-                      )
-                    }
-                    className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
-                  >
-                    <Layers />
-                    Tarjetas
-                  </Button>
+                  {isAdmin && (
+                    <>
+                      <Button
+                        size="sm"
+                        onClick={() =>
+                          navigate(
+                            `/subjects/${subject.id}/topics/${topic.id}/summaries`
+                          )
+                        }
+                        className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
+                      >
+                        <FileText />
+                        Resumenes
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() =>
+                          navigate(
+                            `/subjects/${subject.id}/topics/${topic.id}/cards`
+                          )
+                        }
+                        className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
+                      >
+                        <Layers />
+                        Tarjetas
+                      </Button>
+                    </>
+                  )}
                 </CardFooter>
               </Card>
             ))}
@@ -206,7 +216,9 @@ const Topics = () => {
 
           <FormModal
             key={
-              isDeleteModalOpen ? `delete-${selectedTopic?.id}` : 'delete-closed'
+              isDeleteModalOpen
+                ? `delete-${selectedTopic?.id}`
+                : 'delete-closed'
             }
             open={isDeleteModalOpen}
             onOpenChange={(isOpen) => {
