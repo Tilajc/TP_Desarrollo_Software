@@ -30,6 +30,9 @@ import Profile from './pages/Profile';
 import MyCourses from './pages/MyCourses';
 import MyCourse from './pages/MyCourse';
 import MyCourseTopic from './pages/MyCourseTopic';
+import Subscriptions from './pages/Subscriptions';
+import SubscribedCourse from './pages/SubscribedCourse';
+import SubscribedTopic from './pages/SubscribedTopic';
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -115,6 +118,12 @@ const router = createBrowserRouter([
       {
         path: '/my-courses/:courseId/topics/:topicId',
         element: <MyCourseTopic />,
+      },
+      { path: '/subscriptions', element: <Subscriptions /> },
+      { path: '/subscriptions/:courseId', element: <SubscribedCourse /> },
+      {
+        path: '/subscriptions/:courseId/topics/:topicId',
+        element: <SubscribedTopic />,
       },
     ],
   },

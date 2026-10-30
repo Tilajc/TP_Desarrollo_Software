@@ -44,6 +44,11 @@ const MENU_ITEMS = [
     to: '/my-courses',
     roles: ['USER'],
   },
+  {
+    title: 'Suscripciones',
+    to: '/subscriptions',
+    roles: ['USER'],
+  },
 ];
 
 const AppSidebar = () => {

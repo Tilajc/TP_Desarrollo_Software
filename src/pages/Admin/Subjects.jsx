@@ -7,6 +7,7 @@ import {
   useUpdateSubject,
   useDeleteSubject,
 } from '../../hooks/useSubjects';
+import { useGetMe } from '../../hooks/useAuth';
 import FormModal from '../../components/FormModal';
 import { subjectSchema } from '../../schemas/subject';
 import { Button } from '@/components/ui/button';
@@ -39,6 +40,8 @@ const Subjects = () => {
   const createMutation = useCreateSubject();
   const updateMutation = useUpdateSubject();
   const deleteMutation = useDeleteSubject();
+  const { data: me } = useGetMe();
+  const isAdmin = me?.role === 'ADMIN';
 
   const navigate = useNavigate();
 
@@ -110,12 +113,14 @@ const Subjects = () => {
     <div className="p-6 max-w-5xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Materias</h1>
-        <Button
-          onClick={handleOpenCreate}
-          className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
-        >
-          + Crear Materia
-        </Button>
+        {isAdmin && (
+          <Button
+            onClick={handleOpenCreate}
+            className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
+          >
+            + Crear Materia
+          </Button>
+        )}
       </div>
 
       {isLoading ? (
@@ -128,24 +133,27 @@ const Subjects = () => {
                 key={subject.id}
                 className="flex flex-col justify-between relative"
               >
-                <div className="absolute right-0 top-0 z-10 flex gap-2 p-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleOpenEdit(subject)}
-                    className="cursor-pointer"
-                  >
-                    <Pencil />
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleOpenDelete(subject)}
-                    className="cursor-pointer"
-                  >
-                    <X />
-                  </Button>
-                </div>
+                {isAdmin && (
+                  <div className="absolute right-0 top-0 z-10 flex gap-2 p-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleOpenEdit(subject)}
+                      className="cursor-pointer"
+                    >
+                      <Pencil />
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleOpenDelete(subject)}
+                      className="cursor-pointer"
+                    >
+                      <X />
+                    </Button>
+                  </div>
+                )}
+
                 <CardHeader>
                   <CardTitle className="mr-10">{subject.name}</CardTitle>
                   <CardDescription>
@@ -183,7 +191,9 @@ const Subjects = () => {
 
           <FormModal
             key={
-              isDeleteModalOpen ? `delete-${selectedSubject?.id}` : 'delete-closed'
+              isDeleteModalOpen
+                ? `delete-${selectedSubject?.id}`
+                : 'delete-closed'
             }
             open={isDeleteModalOpen}
             onOpenChange={(isOpen) => {
