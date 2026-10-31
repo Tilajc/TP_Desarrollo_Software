@@ -30,6 +30,7 @@ import Profile from './pages/Profile';
 import MyCourses from './pages/MyCourses';
 import MyCourse from './pages/MyCourse';
 import MyCourseTopic from './pages/MyCourseTopic';
+import StudyCourse from './pages/StudyCourse.jsx';
 import Subscriptions from './pages/Subscriptions';
 import SubscribedCourse from './pages/SubscribedCourse';
 import SubscribedTopic from './pages/SubscribedTopic';
@@ -113,6 +114,10 @@ const router = createBrowserRouter([
       {
         path: '/my-courses',
         element: <MyCourses />,
+      },
+      {
+        path: '/study',
+        element: <StudyCourse />,
       },
       { path: '/my-courses/:courseId', element: <MyCourse /> },
       {
