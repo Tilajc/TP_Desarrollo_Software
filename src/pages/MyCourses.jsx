@@ -19,6 +19,8 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import GetSkeleton from '@/components/GetSkeleton';
+import SearchInput from '@/components/SearchInput';
+import useSearch from '@/hooks/useSearch';
 
 const MyCourses = () => {
   const navigate = useNavigate();
@@ -29,6 +31,14 @@ const MyCourses = () => {
     isLoading,
     isError,
   } = useCourses({ authorId: me?.id }, !!me);
+  const {
+    query,
+    setQuery,
+    filtered: visibleCourses,
+    isSearching,
+  } = useSearch(courses, (course) =>
+    [course.subject?.name, course.subject?.description].join(' ')
+  );
   const { data: subjects } = useSubjects();
 
   const createMutation = useCreateCourse();
@@ -116,6 +126,14 @@ const MyCourses = () => {
         <GetSkeleton />
       ) : (
         <>
+          {courses?.length > 0 && (
+            <SearchInput
+              value={query}
+              onChange={setQuery}
+              placeholder="Buscar cursos..."
+              noResults={isSearching && visibleCourses.length === 0}
+            />
+          )}
           {courses?.length === 0 && (
             <p className="text-slate-400">
               Todavía no creaste ningún curso. Elegí una materia para empezar a
@@ -130,7 +148,7 @@ const MyCourses = () => {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {courses?.map((course) => (
+            {visibleCourses?.map((course) => (
               <Card
                 key={course.id}
                 className="flex flex-col justify-between relative"

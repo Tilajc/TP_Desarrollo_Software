@@ -29,6 +29,8 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import GetSkeleton from '@/components/GetSkeleton';
+import SearchInput from '@/components/SearchInput';
+import useSearch from '@/hooks/useSearch';
 
 const CARD_FIELDS = [
   {
@@ -78,6 +80,18 @@ const CardsSection = ({ topicId, meId }) => {
     isLoading,
     isError,
   } = useCards(topicId, { authorId: meId });
+  const {
+    query,
+    setQuery,
+    filtered: visibleCards,
+    isSearching,
+  } = useSearch(cards, (card) =>
+    [
+      card.question,
+      card.answer,
+      ...(card.hints?.map((hint) => hint.content) ?? []),
+    ].join(' ')
+  );
   const createMutation = useCreateCard();
   const updateMutation = useUpdateCard();
   const deleteMutation = useDeleteCard();
@@ -189,6 +203,14 @@ const CardsSection = ({ topicId, meId }) => {
         <GetSkeleton />
       ) : (
         <>
+          {cards?.length > 0 && (
+            <SearchInput
+              value={query}
+              onChange={setQuery}
+              placeholder="Buscar tarjetas..."
+              noResults={isSearching && visibleCards.length === 0}
+            />
+          )}
           {cards?.length === 0 && (
             <p className="text-slate-400">
               Todavía no cargaste tarjetas en este tema.
@@ -196,7 +218,7 @@ const CardsSection = ({ topicId, meId }) => {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {cards?.map((card) => {
+            {visibleCards?.map((card) => {
               const cardHint = card.hints?.[0];
 
               return (
@@ -297,6 +319,14 @@ const SummariesSection = ({ topicId, meId }) => {
     isLoading,
     isError,
   } = useSummaries(topicId, { authorId: meId });
+  const {
+    query,
+    setQuery,
+    filtered: visibleSummaries,
+    isSearching,
+  } = useSearch(summaries, (summary) =>
+    [summary.title, summary.content].join(' ')
+  );
   const createMutation = useCreateSummary();
   const updateMutation = useUpdateSummary();
   const deleteMutation = useDeleteSummary();
@@ -382,6 +412,14 @@ const SummariesSection = ({ topicId, meId }) => {
         <GetSkeleton />
       ) : (
         <>
+          {summaries?.length > 0 && (
+            <SearchInput
+              value={query}
+              onChange={setQuery}
+              placeholder="Buscar resúmenes..."
+              noResults={isSearching && visibleSummaries.length === 0}
+            />
+          )}
           {summaries?.length === 0 && (
             <p className="text-slate-400">
               Todavía no cargaste resúmenes en este tema.
@@ -389,7 +427,7 @@ const SummariesSection = ({ topicId, meId }) => {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {summaries?.map((summary) => (
+            {visibleSummaries?.map((summary) => (
               <Card
                 key={summary.id}
                 className="flex flex-col justify-between relative h-auto min-h-47.5"

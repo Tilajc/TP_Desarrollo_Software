@@ -16,6 +16,8 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import GetSkeleton from '@/components/GetSkeleton';
+import SearchInput from '@/components/SearchInput';
+import useSearch from '@/hooks/useSearch';
 
 const HINT_FIELDS = [
   {
@@ -35,6 +37,14 @@ const HINT_FIELDS = [
 
 const Hints = () => {
   const { data: hints, isLoading, isError } = useHints();
+  const {
+    query,
+    setQuery,
+    filtered: visibleHints,
+    isSearching,
+  } = useSearch(hints, (hint) =>
+    [hint.content, hint.card?.question, hint.cardId].join(' ')
+  );
   const createMutation = useCreateHint();
   const updateMutation = useUpdateHint();
   const deleteMutation = useDeleteHint();
@@ -123,8 +133,16 @@ const Hints = () => {
         <GetSkeleton />
       ) : (
         <>
+          {hints?.length > 0 && (
+            <SearchInput
+              value={query}
+              onChange={setQuery}
+              placeholder="Buscar pistas..."
+              noResults={isSearching && visibleHints.length === 0}
+            />
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {hints?.map((hint) => (
+            {visibleHints?.map((hint) => (
               <Card key={hint.id} className="flex flex-col justify-between">
                 <CardHeader>
                   <CardTitle className="text-base font-semibold">

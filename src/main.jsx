@@ -1,6 +1,10 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from 'react-router-dom';
 import {
   QueryClient,
   QueryClientProvider,
@@ -12,7 +16,6 @@ import Layout from './Layout';
 import Home from './pages/Home.jsx';
 import Cards from './pages/Cards.jsx';
 import Subjects from './pages/Admin/Subjects.jsx';
-import Students from './pages/Students.jsx';
 import Summaries from './pages/Admin/Summaries.jsx';
 import Users from './pages/Admin/Users.jsx';
 import Hints from './pages/Admin/Hints.jsx';
@@ -27,6 +30,10 @@ import Profile from './pages/Profile';
 import MyCourses from './pages/MyCourses';
 import MyCourse from './pages/MyCourse';
 import MyCourseTopic from './pages/MyCourseTopic';
+import StudyCourse from './pages/StudyCourse.jsx';
+import Subscriptions from './pages/Subscriptions';
+import SubscribedCourse from './pages/SubscribedCourse';
+import SubscribedTopic from './pages/SubscribedTopic';
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -70,7 +77,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/students',
-        element: <Students />,
+        element: <Navigate to="/" replace />,
       },
       {
         path: '/subjects/:subjectId/topics/:topicId/summaries',
@@ -108,10 +115,20 @@ const router = createBrowserRouter([
         path: '/my-courses',
         element: <MyCourses />,
       },
+      {
+        path: '/study',
+        element: <StudyCourse />,
+      },
       { path: '/my-courses/:courseId', element: <MyCourse /> },
       {
         path: '/my-courses/:courseId/topics/:topicId',
         element: <MyCourseTopic />,
+      },
+      { path: '/subscriptions', element: <Subscriptions /> },
+      { path: '/subscriptions/:courseId', element: <SubscribedCourse /> },
+      {
+        path: '/subscriptions/:courseId/topics/:topicId',
+        element: <SubscribedTopic />,
       },
     ],
   },
