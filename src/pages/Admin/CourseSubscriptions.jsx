@@ -175,7 +175,7 @@ const CourseSubscriptions = () => {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
-            Suscripciones a {course.subject.name} de {course.author?.name}
+            Suscripciones {course?.subject?.name} de {course?.author?.name}
           </h1>
         </div>
         <Button

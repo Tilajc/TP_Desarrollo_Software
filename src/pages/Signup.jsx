@@ -76,6 +76,14 @@ const Signup = () => {
                   placeholder="Ej: Pepe"
                 />
               </div>
+              {currentError && (
+                <p className="text-sm text-red-700">
+                  {
+                    currentError.errors?.find((err) => err.field === 'name')
+                      ?.message
+                  }
+                </p>
+              )}
             </div>
 
             <div>
@@ -96,6 +104,14 @@ const Signup = () => {
                   placeholder="Garcia"
                 />
               </div>
+              {currentError && (
+                <p className="text-sm text-red-700">
+                  {
+                    currentError.errors?.find((err) => err.field === 'lastName')
+                      ?.message
+                  }
+                </p>
+              )}
             </div>
 
             <div>
@@ -116,6 +132,14 @@ const Signup = () => {
                   placeholder="pepe@garcia.com"
                 />
               </div>
+              {currentError && (
+                <p className="text-sm text-red-700">
+                  {
+                    currentError.errors?.find((err) => err.field === 'email')
+                      ?.message
+                  }
+                </p>
+              )}
             </div>
 
             <div>
@@ -136,6 +160,14 @@ const Signup = () => {
                   placeholder="********"
                 />
               </div>
+              {currentError && (
+                <p className="text-sm text-red-700">
+                  {
+                    currentError.errors?.find((err) => err.field === 'password')
+                      ?.message
+                  }
+                </p>
+              )}
             </div>
           </div>
 
@@ -147,14 +179,6 @@ const Signup = () => {
             {isLoading ? 'Registrando e iniciando...' : 'Registrarse'}
           </button>
         </form>
-
-        {currentError && (
-          <div className="rounded-md bg-red-100 p-4 mt-4">
-            <p className="text-sm text-red-700">
-              {currentError.message || 'Error al completar la solicitud.'}
-            </p>
-          </div>
-        )}
 
         <div className="text-center text-sm text-gray-600 mt-6">
           ¿Ya tenés una cuenta?{' '}
