@@ -569,7 +569,7 @@ const MyCourseTopic = () => {
           className={
             tab === 'cards'
               ? 'cursor-pointer bg-blue-500 hover:bg-blue-600 text-white'
-              : 'cursor-pointer'
+              : 'cursor-pointer text-black'
           }
         >
           Tarjetas
@@ -580,7 +580,7 @@ const MyCourseTopic = () => {
           className={
             tab === 'summaries'
               ? 'cursor-pointer bg-blue-500 hover:bg-blue-600 text-white'
-              : 'cursor-pointer'
+              : 'cursor-pointer text-black'
           }
         >
           Resúmenes
