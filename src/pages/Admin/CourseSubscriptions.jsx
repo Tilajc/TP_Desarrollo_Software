@@ -1,11 +1,15 @@
-import { useState } from 'react';
-import { Pencil, X, GraduationCap } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { Pencil, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import {
   useCourseSubscriptions,
   useCreateCourseSubscription,
   useUpdateCourseSubscription,
   useDeleteCourseSubscription,
 } from '../../hooks/useCourseSubscriptions';
+import { useCourse } from '../../hooks/useCourses';
+import { useUsers } from '../../hooks/useUsers';
 import FormModal from '../../components/FormModal';
 import { courseSubscriptionSchema } from '../../schemas/courseSubscription';
 import { Button } from '@/components/ui/button';
@@ -19,25 +23,21 @@ import GetSkeleton from '@/components/GetSkeleton';
 import SearchInput from '@/components/SearchInput';
 import useSearch from '@/hooks/useSearch';
 
-const SUBSCRIPTION_FIELDS = [
-  {
-    name: 'courseId',
-    label: 'ID del Curso (Course)',
-    placeholder: 'Ej: 2',
-    type: 'number',
-    required: true,
-  },
-  {
-    name: 'subscriberId',
-    label: 'ID del Suscriptor (User)',
-    placeholder: 'Vacío = el usuario logueado',
-    type: 'number',
-    required: false,
-  },
-];
+const SUBSCRIPTION_SCHEMA = courseSubscriptionSchema.pick({
+  subscriberId: true,
+});
 
 const CourseSubscriptions = () => {
-  const { data: subscriptions, isLoading, isError } = useCourseSubscriptions();
+  const { courseId } = useParams();
+  const navigate = useNavigate();
+
+  const { data: course } = useCourse(courseId);
+  const { data: users } = useUsers();
+  const {
+    data: subscriptions,
+    isLoading,
+    isError,
+  } = useCourseSubscriptions(courseId);
   const {
     query,
     setQuery,
@@ -46,12 +46,10 @@ const CourseSubscriptions = () => {
   } = useSearch(subscriptions, (sub) =>
     [
       sub.id,
-      sub.courseId,
       sub.subscriberId,
       sub.subscriber?.name,
       sub.subscriber?.lastName,
       sub.subscriber?.email,
-      sub.course?.subject?.name,
     ].join(' ')
   );
   const createMutation = useCreateCourseSubscription();
@@ -61,6 +59,33 @@ const CourseSubscriptions = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedSub, setSelectedSub] = useState(null);
+
+  const subscriptionFields = useMemo(() => {
+    const subscribedIds = new Set(
+      subscriptions?.map((sub) => sub.subscriberId)
+    );
+
+    return [
+      {
+        name: 'subscriberId',
+        label: 'Usuario',
+        type: 'select',
+        placeholder: 'Seleccione un usuario...',
+        required: true,
+        options: (users || [])
+          .filter(
+            (user) =>
+              user.id !== course?.authorId &&
+              (!subscribedIds.has(user.id) ||
+                user.id === selectedSub?.subscriberId)
+          )
+          .map((user) => ({
+            value: user.id,
+            label: `${user.name} ${user.lastName} (${user.email})`,
+          })),
+      },
+    ];
+  }, [users, subscriptions, course, selectedSub]);
 
   const handleOpenCreate = () => {
     setSelectedSub(null);
@@ -88,10 +113,8 @@ const CourseSubscriptions = () => {
 
   const handleSubmit = (formData) => {
     const payload = {
-      courseId: Number(formData.courseId),
-      ...(formData.subscriberId && {
-        subscriberId: Number(formData.subscriberId),
-      }),
+      courseId: Number(courseId),
+      subscriberId: Number(formData.subscriberId),
     };
 
     if (selectedSub) {
@@ -126,6 +149,11 @@ const CourseSubscriptions = () => {
     });
   };
 
+  const subscriberName = (sub) =>
+    sub?.subscriber
+      ? `${sub.subscriber.name} ${sub.subscriber.lastName}`
+      : `Usuario #${sub?.subscriberId}`;
+
   if (isError) {
     return (
       <p className="p-4 text-red-500">
@@ -136,15 +164,19 @@ const CourseSubscriptions = () => {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => navigate(`/courses`)}
+        className="cursor-pointer mb-4"
+      >
+        ← Volver a Cursos
+      </Button>
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
-            <GraduationCap className="w-8 h-8 text-indigo-400" />
-            Suscripciones a Cursos
+            Suscripciones a {course.subject.name} de {course.author?.name}
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Gestión de suscripciones de usuarios por curso
-          </p>
         </div>
         <Button
           onClick={handleOpenCreate}
@@ -168,7 +200,7 @@ const CourseSubscriptions = () => {
           )}
           {subscriptions?.length === 0 && (
             <p className="text-slate-400">
-              No hay suscripciones registradas todavía.
+              Este curso todavía no tiene suscripciones.
             </p>
           )}
 
@@ -205,11 +237,13 @@ const CourseSubscriptions = () => {
                   </CardTitle>
                   <CardDescription className="space-y-1 mt-2 text-xs text-slate-300">
                     <p>
-                      <strong>ID Curso:</strong> {sub.courseId}
+                      <strong>Suscriptor:</strong> {subscriberName(sub)}
                     </p>
-                    <p>
-                      <strong>ID Suscriptor:</strong> {sub.subscriberId}
-                    </p>
+                    {sub.subscriber?.email && (
+                      <p>
+                        <strong>Email:</strong> {sub.subscriber.email}
+                      </p>
+                    )}
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -223,9 +257,9 @@ const CourseSubscriptions = () => {
             title={
               selectedSub ? 'Editar Suscripción' : 'Nueva Suscripción a Curso'
             }
-            fields={SUBSCRIPTION_FIELDS}
+            fields={subscriptionFields}
             initialData={selectedSub}
-            schema={courseSubscriptionSchema}
+            schema={SUBSCRIPTION_SCHEMA}
             onSubmit={handleSubmit}
             error={createMutation.error || updateMutation.error}
             isLoading={createMutation.isPending || updateMutation.isPending}
@@ -240,7 +274,7 @@ const CourseSubscriptions = () => {
               setIsDeleteModalOpen(isOpen);
               if (!isOpen) setSelectedSub(null);
             }}
-            title={`¿Deseas dar de baja la suscripción #${selectedSub?.id}?`}
+            title={`¿Deseas dar de baja la suscripción de ${subscriberName(selectedSub)}?`}
             fields={[]}
             onSubmit={handleDeleteSubmit}
             isLoading={deleteMutation.isPending}
