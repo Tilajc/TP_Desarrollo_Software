@@ -18,12 +18,24 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import GetSkeleton from '@/components/GetSkeleton';
+import SearchInput from '@/components/SearchInput';
+import useSearch from '@/hooks/useSearch';
 import { useUsers } from '@/hooks/useUsers';
 import { useSubjects } from '@/hooks/useSubjects';
 import { useGetMe } from '@/hooks/useAuth';
 
 const Courses = () => {
   const { data: courses, isLoading, isError } = useCourses();
+  const {
+    query,
+    setQuery,
+    filtered: visibleCourses,
+    isSearching,
+  } = useSearch(courses, (course) =>
+    [course.subject?.name, course.author?.name, course.author?.lastName].join(
+      ' '
+    )
+  );
   const { data: users } = useUsers();
   const { data: subjects } = useSubjects();
   const { data: me } = useGetMe();
@@ -146,8 +158,16 @@ const Courses = () => {
         <GetSkeleton />
       ) : (
         <>
+          {courses?.length > 0 && (
+            <SearchInput
+              value={query}
+              onChange={setQuery}
+              placeholder="Buscar cursos..."
+              noResults={isSearching && visibleCourses.length === 0}
+            />
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {courses?.map((course) => (
+            {visibleCourses?.map((course) => (
               <Card
                 key={course.id}
                 className="flex flex-col justify-between relative"

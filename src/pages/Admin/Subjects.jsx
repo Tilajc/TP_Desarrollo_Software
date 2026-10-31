@@ -19,6 +19,8 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import GetSkeleton from '@/components/GetSkeleton';
+import SearchInput from '@/components/SearchInput';
+import useSearch from '@/hooks/useSearch';
 
 const SUBJECT_FIELDS = [
   {
@@ -37,6 +39,14 @@ const SUBJECT_FIELDS = [
 
 const Subjects = () => {
   const { data: subjects, isLoading, isError } = useSubjects();
+  const {
+    query,
+    setQuery,
+    filtered: visibleSubjects,
+    isSearching,
+  } = useSearch(subjects, (subject) =>
+    [subject.name, subject.description].join(' ')
+  );
   const createMutation = useCreateSubject();
   const updateMutation = useUpdateSubject();
   const deleteMutation = useDeleteSubject();
@@ -127,8 +137,16 @@ const Subjects = () => {
         <GetSkeleton />
       ) : (
         <>
+          {subjects?.length > 0 && (
+            <SearchInput
+              value={query}
+              onChange={setQuery}
+              placeholder="Buscar materias..."
+              noResults={isSearching && visibleSubjects.length === 0}
+            />
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {subjects?.map((subject) => (
+            {visibleSubjects?.map((subject) => (
               <Card
                 key={subject.id}
                 className="flex flex-col justify-between relative"

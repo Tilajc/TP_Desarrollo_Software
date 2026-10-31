@@ -15,9 +15,23 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import GetSkeleton from '@/components/GetSkeleton';
+import SearchInput from '@/components/SearchInput';
+import useSearch from '@/hooks/useSearch';
 
 const CardsList = ({ topicId, authorId }) => {
   const { data: cards, isLoading, isError } = useCards(topicId, { authorId });
+  const {
+    query,
+    setQuery,
+    filtered: visibleCards,
+    isSearching,
+  } = useSearch(cards, (card) =>
+    [
+      card.question,
+      card.answer,
+      ...(card.hints?.map((hint) => hint.content) ?? []),
+    ].join(' ')
+  );
 
   if (isError)
     return <p className="text-red-500">Error al cargar las tarjetas.</p>;
@@ -25,6 +39,14 @@ const CardsList = ({ topicId, authorId }) => {
 
   return (
     <>
+      {cards?.length > 0 && (
+        <SearchInput
+          value={query}
+          onChange={setQuery}
+          placeholder="Buscar tarjetas..."
+          noResults={isSearching && visibleCards.length === 0}
+        />
+      )}
       {cards?.length === 0 && (
         <p className="text-slate-400">
           El autor todavía no cargó tarjetas en este tema.
@@ -32,7 +54,7 @@ const CardsList = ({ topicId, authorId }) => {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {cards?.map((card) => {
+        {visibleCards?.map((card) => {
           const cardHint = card.hints?.[0];
 
           return (
@@ -73,6 +95,14 @@ const SummariesList = ({ topicId, authorId }) => {
     isLoading,
     isError,
   } = useSummaries(topicId, { authorId });
+  const {
+    query,
+    setQuery,
+    filtered: visibleSummaries,
+    isSearching,
+  } = useSearch(summaries, (summary) =>
+    [summary.title, summary.content].join(' ')
+  );
 
   if (isError)
     return <p className="text-red-500">Error al cargar los resúmenes.</p>;
@@ -80,6 +110,14 @@ const SummariesList = ({ topicId, authorId }) => {
 
   return (
     <>
+      {summaries?.length > 0 && (
+        <SearchInput
+          value={query}
+          onChange={setQuery}
+          placeholder="Buscar resúmenes..."
+          noResults={isSearching && visibleSummaries.length === 0}
+        />
+      )}
       {summaries?.length === 0 && (
         <p className="text-slate-400">
           El autor todavía no cargó resúmenes en este tema.
@@ -87,7 +125,7 @@ const SummariesList = ({ topicId, authorId }) => {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {summaries?.map((summary) => (
+        {visibleSummaries?.map((summary) => (
           <Card key={summary.id} className="h-auto min-h-47.5">
             <CardHeader className="p-5">
               <CardTitle className="text-lg font-bold leading-snug wrap-break-words">

@@ -16,6 +16,8 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import GetSkeleton from '@/components/GetSkeleton';
+import SearchInput from '@/components/SearchInput';
+import useSearch from '@/hooks/useSearch';
 
 const SUBSCRIPTION_FIELDS = [
   {
@@ -36,6 +38,22 @@ const SUBSCRIPTION_FIELDS = [
 
 const CourseSubscriptions = () => {
   const { data: subscriptions, isLoading, isError } = useCourseSubscriptions();
+  const {
+    query,
+    setQuery,
+    filtered: visibleSubscriptions,
+    isSearching,
+  } = useSearch(subscriptions, (sub) =>
+    [
+      sub.id,
+      sub.courseId,
+      sub.subscriberId,
+      sub.subscriber?.name,
+      sub.subscriber?.lastName,
+      sub.subscriber?.email,
+      sub.course?.subject?.name,
+    ].join(' ')
+  );
   const createMutation = useCreateCourseSubscription();
   const updateMutation = useUpdateCourseSubscription();
   const deleteMutation = useDeleteCourseSubscription();
@@ -140,6 +158,14 @@ const CourseSubscriptions = () => {
         <GetSkeleton />
       ) : (
         <>
+          {subscriptions?.length > 0 && (
+            <SearchInput
+              value={query}
+              onChange={setQuery}
+              placeholder="Buscar suscripciones..."
+              noResults={isSearching && visibleSubscriptions.length === 0}
+            />
+          )}
           {subscriptions?.length === 0 && (
             <p className="text-slate-400">
               No hay suscripciones registradas todavía.
@@ -147,7 +173,7 @@ const CourseSubscriptions = () => {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {subscriptions?.map((sub) => (
+            {visibleSubscriptions?.map((sub) => (
               <Card
                 key={sub.id}
                 className="flex flex-col justify-between relative"

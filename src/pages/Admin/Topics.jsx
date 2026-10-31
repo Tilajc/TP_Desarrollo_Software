@@ -14,6 +14,8 @@ import { topicSchema } from '../../schemas/topic';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import GetSkeleton from '@/components/GetSkeleton';
+import SearchInput from '@/components/SearchInput';
+import useSearch from '@/hooks/useSearch';
 
 const TOPIC_FIELDS = [
   {
@@ -30,6 +32,12 @@ const Topics = () => {
 
   const { data: subject } = useSubject(subjectId);
   const { data: topics, isLoading, isError } = useTopics(subjectId);
+  const {
+    query,
+    setQuery,
+    filtered: visibleTopics,
+    isSearching,
+  } = useSearch(topics, (topic) => topic.name);
   const createMutation = useCreateTopic();
   const updateMutation = useUpdateTopic();
   const deleteMutation = useDeleteTopic();
@@ -132,6 +140,14 @@ const Topics = () => {
         <GetSkeleton />
       ) : (
         <>
+          {topics?.length > 0 && (
+            <SearchInput
+              value={query}
+              onChange={setQuery}
+              placeholder="Buscar temas..."
+              noResults={isSearching && visibleTopics.length === 0}
+            />
+          )}
           {topics?.length === 0 && (
             <p className="text-slate-400">
               Esta materia todavía no tiene temas.
@@ -139,7 +155,7 @@ const Topics = () => {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {topics?.map((topic) => (
+            {visibleTopics?.map((topic) => (
               <Card
                 key={topic.id}
                 className="flex flex-col justify-between relative"
@@ -164,6 +180,7 @@ const Topics = () => {
                     </Button>
                   </div>
                 )}
+
                 <CardHeader>
                   <CardTitle className="mr-10">{topic.name}</CardTitle>
                 </CardHeader>

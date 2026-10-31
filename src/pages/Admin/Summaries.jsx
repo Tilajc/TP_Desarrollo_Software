@@ -18,6 +18,8 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import GetSkeleton from '@/components/GetSkeleton';
+import SearchInput from '@/components/SearchInput';
+import useSearch from '@/hooks/useSearch';
 
 const SUMMARY_FIELDS = [
   {
@@ -41,6 +43,14 @@ const Summaries = () => {
 
   const { data: topic } = useTopic(topicId);
   const { data: summaries, isLoading, isError } = useSummaries(topicId);
+  const {
+    query,
+    setQuery,
+    filtered: visibleSummaries,
+    isSearching,
+  } = useSearch(summaries, (summary) =>
+    [summary.title, summary.content].join(' ')
+  );
   const createMutation = useCreateSummary();
   const updateMutation = useUpdateSummary();
   const deleteMutation = useDeleteSummary();
@@ -116,7 +126,6 @@ const Summaries = () => {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      {/* Botón idéntico al de TopicCards */}
       <Button
         variant="ghost"
         size="sm"
@@ -142,6 +151,14 @@ const Summaries = () => {
         <GetSkeleton />
       ) : (
         <>
+          {summaries?.length > 0 && (
+            <SearchInput
+              value={query}
+              onChange={setQuery}
+              placeholder="Buscar resúmenes..."
+              noResults={isSearching && visibleSummaries.length === 0}
+            />
+          )}
           {summaries?.length === 0 && (
             <p className="text-slate-400">
               Este tema todavía no tiene resúmenes.
@@ -149,7 +166,7 @@ const Summaries = () => {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {summaries?.map((summary) => (
+            {visibleSummaries?.map((summary) => (
               <Card key={summary.id} className="flex flex-col justify-between">
                 <CardHeader>
                   <CardTitle className="text-lg font-semibold">

@@ -16,6 +16,8 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import GetSkeleton from '@/components/GetSkeleton';
+import SearchInput from '@/components/SearchInput';
+import useSearch from '@/hooks/useSearch';
 
 const getFields = (isEditing) => [
   {
@@ -61,6 +63,14 @@ const getFields = (isEditing) => [
 
 const Users = () => {
   const { data: users, isLoading, isError } = useUsers();
+  const {
+    query,
+    setQuery,
+    filtered: visibleUsers,
+    isSearching,
+  } = useSearch(users, (user) =>
+    [user.name, user.lastName, user.email, user.role].join(' ')
+  );
   const createMutation = useCreateUser();
   const updateMutation = useUpdateUser();
   const deleteMutation = useDeleteUser();
@@ -151,8 +161,16 @@ const Users = () => {
         <GetSkeleton />
       ) : (
         <>
+          {users?.length > 0 && (
+            <SearchInput
+              value={query}
+              onChange={setQuery}
+              placeholder="Buscar usuarios..."
+              noResults={isSearching && visibleUsers.length === 0}
+            />
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {users?.map((user) => (
+            {visibleUsers?.map((user) => (
               <Card
                 key={user.id}
                 className="flex flex-col justify-between relative"

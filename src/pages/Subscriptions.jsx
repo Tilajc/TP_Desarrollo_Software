@@ -19,6 +19,8 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import GetSkeleton from '@/components/GetSkeleton';
+import SearchInput from '@/components/SearchInput';
+import useSearch from '@/hooks/useSearch';
 
 const authorName = (course) =>
   course.author
@@ -33,6 +35,7 @@ const Subscriptions = () => {
   const queryClient = useQueryClient();
 
   const [tab, setTab] = useState('explore');
+  const [subjectFilter, setSubjectFilter] = useState('');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedSubscription, setSelectedSubscription] = useState(null);
 
@@ -60,6 +63,34 @@ const Subscriptions = () => {
     () => courses?.filter((course) => course.authorId !== me?.id) || [],
     [courses, me]
   );
+
+  const subjectOptions = useMemo(() => {
+    const subjects = new Map();
+    catalog.forEach((course) => {
+      if (course.subject) subjects.set(course.subjectId, course.subject.name);
+    });
+    return [...subjects.entries()]
+      .map(([id, name]) => ({ id, name }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [catalog]);
+
+  const visibleCatalog = subjectFilter
+    ? catalog.filter((course) => String(course.subjectId) === subjectFilter)
+    : catalog;
+
+  const exploreSearch = useSearch(visibleCatalog, (course) =>
+    [course.subject?.name, course.author?.name, course.author?.lastName].join(
+      ' '
+    )
+  );
+  const mineSearch = useSearch(subscriptions, (subscription) =>
+    [
+      subscription.course?.subject?.name,
+      subscription.course?.author?.name,
+      subscription.course?.author?.lastName,
+    ].join(' ')
+  );
+
   const isSubscribing = (courseId) =>
     createMutation.isPending && createMutation.variables?.courseId === courseId;
 
@@ -135,7 +166,46 @@ const Subscriptions = () => {
         <GetSkeleton />
       ) : tab === 'explore' ? (
         <>
-          <div className="flex items-center gap-3 mb-4"></div>
+          <div className="flex items-center gap-3 mb-4">
+            <label htmlFor="subject-filter" className="text-sm font-medium">
+              Materia
+            </label>
+            <select
+              id="subject-filter"
+              value={subjectFilter}
+              onChange={(e) => setSubjectFilter(e.target.value)}
+              className="flex h-9 w-full sm:w-64 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            >
+              <option
+                value=""
+                className="bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100"
+              >
+                Todas las materias
+              </option>
+              {subjectOptions.map((subject) => (
+                <option
+                  key={subject.id}
+                  value={subject.id}
+                  className="bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100"
+                >
+                  {subject.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {catalog.length > 0 && (
+            <SearchInput
+              value={exploreSearch.query}
+              onChange={exploreSearch.setQuery}
+              placeholder="Buscar por materia o autor..."
+              noResults={
+                exploreSearch.isSearching &&
+                visibleCatalog.length > 0 &&
+                exploreSearch.filtered.length === 0
+              }
+            />
+          )}
 
           {createMutation.error && (
             <p className="text-sm text-red-700 mb-4">
@@ -143,8 +213,16 @@ const Subscriptions = () => {
             </p>
           )}
 
+          {visibleCatalog.length === 0 && (
+            <p className="text-slate-400">
+              {catalog.length === 0
+                ? 'Todavía no hay cursos de otros usuarios para suscribirte.'
+                : 'No hay cursos para la materia seleccionada.'}
+            </p>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {catalog.map((course) => {
+            {exploreSearch.filtered.map((course) => {
               const subscribed = subscribedCourseIds.has(course.id);
 
               return (
@@ -191,6 +269,17 @@ const Subscriptions = () => {
         </>
       ) : (
         <>
+          {subscriptions?.length > 0 && (
+            <SearchInput
+              value={mineSearch.query}
+              onChange={mineSearch.setQuery}
+              placeholder="Buscar por materia o autor..."
+              noResults={
+                mineSearch.isSearching && mineSearch.filtered.length === 0
+              }
+            />
+          )}
+
           {subscriptions?.length === 0 && (
             <p className="text-slate-400">
               Todavía no te suscribiste a ningún curso. Mirá la pestaña Explorar
@@ -199,7 +288,7 @@ const Subscriptions = () => {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {subscriptions?.map((subscription) => (
+            {mineSearch.filtered?.map((subscription) => (
               <Card
                 key={subscription.id}
                 className="flex flex-col justify-between"

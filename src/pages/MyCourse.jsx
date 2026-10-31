@@ -6,6 +6,8 @@ import { useGetMe } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import GetSkeleton from '@/components/GetSkeleton';
+import SearchInput from '@/components/SearchInput';
+import useSearch from '@/hooks/useSearch';
 
 const MyCourse = () => {
   const { courseId } = useParams();
@@ -17,6 +19,12 @@ const MyCourse = () => {
     course?.subjectId,
     !!course
   );
+  const {
+    query,
+    setQuery,
+    filtered: visibleTopics,
+    isSearching,
+  } = useSearch(topics, (topic) => topic.name);
 
   if (isError)
     return <p className="p-4 text-red-500">No se encontró el curso.</p>;
@@ -57,6 +65,14 @@ const MyCourse = () => {
         <GetSkeleton />
       ) : (
         <>
+          {topics?.length > 0 && (
+            <SearchInput
+              value={query}
+              onChange={setQuery}
+              placeholder="Buscar temas..."
+              noResults={isSearching && visibleTopics.length === 0}
+            />
+          )}
           {topics?.length === 0 && (
             <p className="text-slate-400">
               Esta materia todavía no tiene temas. Los temas los carga un
@@ -65,7 +81,7 @@ const MyCourse = () => {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {topics?.map((topic) => (
+            {visibleTopics?.map((topic) => (
               <Card key={topic.id} className="flex flex-col justify-between">
                 <CardHeader>
                   <CardTitle>{topic.name}</CardTitle>
