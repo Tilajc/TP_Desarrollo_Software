@@ -109,7 +109,11 @@ const Topics = () => {
   };
 
   if (isError)
-    return <p className="p-4 text-red-500">Error al cargar los temas.</p>;
+    return (
+      <p className="p-4 text-red-500">
+        Error al cargar los temas. Intente nuevamente mas tarde.
+      </p>
+    );
 
   return (
     <div className="p-6 max-w-5xl mx-auto">

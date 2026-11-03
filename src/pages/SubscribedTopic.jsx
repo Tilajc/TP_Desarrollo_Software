@@ -34,7 +34,11 @@ const CardsList = ({ topicId, authorId }) => {
   );
 
   if (isError)
-    return <p className="text-red-500">Error al cargar las tarjetas.</p>;
+    return (
+      <p className="text-red-500">
+        Error al cargar las tarjetas. Intente nuevamente mas tarde.
+      </p>
+    );
   if (isLoading) return <GetSkeleton />;
 
   return (
@@ -105,7 +109,11 @@ const SummariesList = ({ topicId, authorId }) => {
   );
 
   if (isError)
-    return <p className="text-red-500">Error al cargar los resúmenes.</p>;
+    return (
+      <p className="text-red-500">
+        Error al cargar los resúmenes. Intente nuevamente mas tarde.
+      </p>
+    );
   if (isLoading) return <GetSkeleton />;
 
   return (

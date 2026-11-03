@@ -78,7 +78,10 @@ const Cards = () => {
     return (
       <div className="w-full min-h-screen bg-[#0b0f19] flex items-center justify-center p-4 text-center">
         <div className="bg-[#0f1422] border border-slate-800 rounded-2xl p-6 text-rose-400">
-          <p>Hubo un error al cargar las tarjetas de estudio.</p>
+          <p>
+            Hubo un error al cargar las tarjetas de estudio. Intente nuevamente
+            mas tarde.
+          </p>
           <Button
             variant="outline"
             className="mt-4"

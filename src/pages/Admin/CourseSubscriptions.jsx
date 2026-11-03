@@ -157,7 +157,8 @@ const CourseSubscriptions = () => {
   if (isError) {
     return (
       <p className="p-4 text-red-500">
-        Error al cargar las suscripciones a cursos.
+        Error al cargar las suscripciones a cursos. Intente nuevamente mas
+        tarde.
       </p>
     );
   }
