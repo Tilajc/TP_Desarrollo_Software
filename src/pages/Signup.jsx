@@ -1,12 +1,17 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Mail, Lock, User } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useRegister } from '@/hooks/useUsers';
-import { useLogin } from '@/hooks/useAuth';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 const Signup = () => {
+  const [turnstileToken, setTurnstileToken] = useState(null);
+  const [captchaError, setCaptchaError] = useState('');
+
+  const turnstileRef = useRef(null);
+
   const registerMutation = useRegister();
-  const loginMutation = useLogin();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -14,6 +19,11 @@ const Signup = () => {
     email: '',
     password: '',
   });
+
+  const resetCaptcha = () => {
+    setTurnstileToken(null);
+    turnstileRef.current?.reset();
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,24 +35,28 @@ const Signup = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setCaptchaError('');
 
-    registerMutation.mutate(formData, {
-      onSuccess: () => {
-        loginMutation.mutate(
-          { email: formData.email, password: formData.password },
-          {
-            onSuccess: (data) => {
-              localStorage.setItem('token', data.token);
-              window.location.href = '/';
-            },
-          }
-        );
-      },
-    });
+    if (!turnstileToken) {
+      setCaptchaError('Por favor, completa la verificación del captcha.');
+      return;
+    }
+
+    registerMutation.mutate(
+      { ...formData, turnstileToken },
+      {
+        onSuccess: () => {
+          navigate('/login');
+        },
+        onError: () => {
+          resetCaptcha();
+        },
+      }
+    );
   };
 
-  const isLoading = registerMutation.isPending || loginMutation.isPending;
-  const currentError = registerMutation.error || loginMutation.error;
+  const isLoading = registerMutation.isPending;
+  const currentError = registerMutation.error;
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
@@ -76,16 +90,7 @@ const Signup = () => {
                   placeholder="Ej: Pepe"
                 />
               </div>
-              {currentError && (
-                <p className="text-sm text-red-700">
-                  {
-                    currentError.errors?.find((err) => err.field === 'name')
-                      ?.message
-                  }
-                </p>
-              )}
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Apellido
@@ -104,16 +109,7 @@ const Signup = () => {
                   placeholder="Garcia"
                 />
               </div>
-              {currentError && (
-                <p className="text-sm text-red-700">
-                  {
-                    currentError.errors?.find((err) => err.field === 'lastName')
-                      ?.message
-                  }
-                </p>
-              )}
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Email
@@ -132,16 +128,7 @@ const Signup = () => {
                   placeholder="pepe@garcia.com"
                 />
               </div>
-              {currentError && (
-                <p className="text-sm text-red-700">
-                  {
-                    currentError.errors?.find((err) => err.field === 'email')
-                      ?.message
-                  }
-                </p>
-              )}
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Contraseña
@@ -160,23 +147,41 @@ const Signup = () => {
                   placeholder="********"
                 />
               </div>
-              {currentError && (
-                <p className="text-sm text-red-700">
-                  {
-                    currentError.errors?.find((err) => err.field === 'password')
-                      ?.message
-                  }
-                </p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Captcha
+              </label>
+
+              <div className="my-2 flex justify-center">
+                <Turnstile
+                  ref={turnstileRef}
+                  siteKey={import.meta.env.VITE_SITE_KEY}
+                  onSuccess={(token) => setTurnstileToken(token)}
+                  onExpire={() => setTurnstileToken(null)}
+                />
+              </div>
+
+              {captchaError && (
+                <p className="mt-1 text-xs text-red-600">{captchaError}</p>
               )}
             </div>
           </div>
+
+          {currentError && (
+            <div className="rounded-md bg-red-100 p-3">
+              <p className="text-sm text-red-700">
+                {currentError.message || 'Ocurrió un error al registrarse.'}
+              </p>
+            </div>
+          )}
 
           <button
             type="submit"
             disabled={isLoading}
             className="flex cursor-pointer w-full justify-center items-center rounded-lg bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-500 focus:outline-none focus:ring-indigo-500 disabled:opacity-50 transition-all duration-150 mt-6"
           >
-            {isLoading ? 'Registrando e iniciando...' : 'Registrarse'}
+            {isLoading ? 'Registrando...' : 'Registrarse'}
           </button>
         </form>
 

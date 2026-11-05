@@ -16,6 +16,7 @@ const apiFetch = async (endpoint, options = {}) => {
 
   try {
     response = await fetch(`${BASE_URL}${endpoint}`, config);
+    // eslint-disable-next-line no-unused-vars
   } catch (networkError) {
     throw {
       type: 'NETWORK_ERROR',
