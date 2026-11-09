@@ -109,11 +109,7 @@ const Topics = () => {
   };
 
   if (isError)
-    return (
-      <p className="p-4 text-red-500">
-        Error al cargar los temas. Intente nuevamente mas tarde.
-      </p>
-    );
+    return <p className="p-4 text-red-500">Error al cargar los temas.</p>;
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
@@ -244,11 +240,15 @@ const Topics = () => {
             open={isDeleteModalOpen}
             onOpenChange={(isOpen) => {
               setIsDeleteModalOpen(isOpen);
-              if (!isOpen) setSelectedTopic(null);
+              if (!isOpen) {
+                deleteMutation.reset();
+                setSelectedTopic(null);
+              }
             }}
-            title={`¿Deseas eliminar el tema "${selectedTopic?.name}"?`}
+            title={`¿Deseas eliminar el tema "${selectedTopic?.name}"? También se eliminarán sus tarjetas y resúmenes.`}
             fields={[]}
             onSubmit={handleDeleteSubmit}
+            error={deleteMutation.error}
             isLoading={deleteMutation.isPending}
           />
         </>

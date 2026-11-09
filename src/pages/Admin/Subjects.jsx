@@ -117,11 +117,7 @@ const Subjects = () => {
   };
 
   if (isError)
-    return (
-      <p className="p-4 text-red-500">
-        Error al cargar las materias. Intente nuevamente mas tarde.
-      </p>
-    );
+    return <p className="p-4 text-red-500">Error al cargar las materias.</p>;
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
@@ -220,11 +216,15 @@ const Subjects = () => {
             open={isDeleteModalOpen}
             onOpenChange={(isOpen) => {
               setIsDeleteModalOpen(isOpen);
-              if (!isOpen) setSelectedSubject(null);
+              if (!isOpen) {
+                deleteMutation.reset();
+                setSelectedSubject(null);
+              }
             }}
-            title={`¿Deseas eliminar la materia "${selectedSubject?.name}"?`}
+            title={`¿Deseas eliminar la materia "${selectedSubject?.name}"? También se eliminarán sus temas, cursos, tarjetas y resúmenes.`}
             fields={[]}
             onSubmit={handleDeleteSubmit}
+            error={deleteMutation.error}
             isLoading={deleteMutation.isPending}
           />
         </>
