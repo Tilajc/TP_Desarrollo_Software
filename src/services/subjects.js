@@ -27,3 +27,13 @@ export const deleteSubject = async (id) => {
     method: 'DELETE',
   });
 };
+
+export const getDeletedSubjects = async () => {
+  return apiFetch('/subjects/deleted');
+};
+
+export const restoreSubject = async (id) => {
+  return apiFetch(`/subjects/${id}/restore`, {
+    method: 'POST',
+  });
+};

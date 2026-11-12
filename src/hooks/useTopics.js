@@ -5,6 +5,8 @@ import {
   createTopic,
   updateTopic,
   deleteTopic,
+  getDeletedTopics,
+  restoreTopic,
 } from '../services/topics';
 
 export const useTopics = (subjectId, enabled = true) => {
@@ -59,6 +61,29 @@ export const useDeleteTopic = () => {
   return useMutation({
     mutationFn: deleteTopic,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['topics'] }),
+    enabled: !!token,
+    retry: false,
+  });
+};
+
+export const useDeletedTopics = () => {
+  const token = localStorage.getItem('token');
+
+  return useQuery({
+    queryKey: ['topics', 'deleted'],
+    queryFn: getDeletedTopics,
+    enabled: !!token,
+    retry: false,
+  });
+};
+
+export const useRestoreTopic = () => {
+  const token = localStorage.getItem('token');
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: restoreTopic,
+    onSuccess: () => queryClient.invalidateQueries(),
     enabled: !!token,
     retry: false,
   });

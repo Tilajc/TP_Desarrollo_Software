@@ -1,9 +1,9 @@
 import apiFetch from '../lib/api';
 
-export const login = async (email, password) => {
+export const login = async (email, password, turnstileToken) => {
   return apiFetch('/auth/login', {
     method: 'POST',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, turnstileToken }),
   });
 };
 

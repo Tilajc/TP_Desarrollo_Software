@@ -40,6 +40,11 @@ const MENU_ITEMS = [
     roles: ['ADMIN'],
   },
   {
+    title: 'Recuperación',
+    to: '/recovery',
+    roles: ['ADMIN'],
+  },
+  {
     title: 'Mis Cursos',
     to: '/my-courses',
     roles: ['USER'],

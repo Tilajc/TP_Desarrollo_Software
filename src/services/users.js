@@ -31,7 +31,7 @@ export const deleteUser = async (id) => {
 export const register = async (userData) => {
   return apiFetch('/users/register', {
     method: 'POST',
-    body: JSON.stringify(userData),
+    body: JSON.stringify({ ...userData }),
   });
 };
 

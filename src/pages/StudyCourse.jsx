@@ -157,7 +157,7 @@ const FlashcardPlayer = ({ cards = [], onBack }) => {
 
       <div
         onClick={() => setShowAnswer(!showAnswer)}
-        className="w-full min-h-[14rem] bg-[#0b0f19]/80 border border-slate-800 rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-purple-500/40 transition-all select-none group shadow-inner"
+        className="w-full min-h-56 bg-[#0b0f19]/80 border border-slate-800 rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-purple-500/40 transition-all select-none group shadow-inner"
       >
         {!showAnswer ? (
           <div className="space-y-2">

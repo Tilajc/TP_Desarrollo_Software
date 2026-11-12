@@ -5,7 +5,8 @@ export const useLogin = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ email, password }) => login(email, password),
+    mutationFn: ({ email, password, turnstileToken }) =>
+      login(email, password, turnstileToken),
     onSuccess: (data) => {
       if (data?.token) {
         localStorage.setItem('token', data.token);

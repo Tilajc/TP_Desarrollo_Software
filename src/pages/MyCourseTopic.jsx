@@ -186,7 +186,11 @@ const CardsSection = ({ topicId, meId }) => {
   };
 
   if (isError)
-    return <p className="text-red-500">Error al cargar tus tarjetas.</p>;
+    return (
+      <p className="text-red-500">
+        Error al cargar tus tarjetas. Intente nuevamente mas tarde.
+      </p>
+    );
 
   return (
     <>
@@ -395,7 +399,11 @@ const SummariesSection = ({ topicId, meId }) => {
   };
 
   if (isError)
-    return <p className="text-red-500">Error al cargar tus resúmenes.</p>;
+    return (
+      <p className="text-red-500">
+        Error al cargar tus resúmenes. Intente nuevamente mas tarde.
+      </p>
+    );
 
   return (
     <>

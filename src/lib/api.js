@@ -1,4 +1,5 @@
 import useLoginStatus from '../store/useLoginStatus';
+
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 const apiFetch = async (endpoint, options = {}) => {
@@ -11,7 +12,18 @@ const apiFetch = async (endpoint, options = {}) => {
     ...options,
   };
 
-  const response = await fetch(`${BASE_URL}${endpoint}`, config);
+  let response;
+
+  try {
+    response = await fetch(`${BASE_URL}${endpoint}`, config);
+    // eslint-disable-next-line no-unused-vars
+  } catch (networkError) {
+    throw {
+      type: 'NETWORK_ERROR',
+      message:
+        'No se pudo establecer conexión con el servidor. Intente nuevamente mas tarde.',
+    };
+  }
 
   if (response.status === 401) {
     localStorage.removeItem('token');
@@ -21,6 +33,8 @@ const apiFetch = async (endpoint, options = {}) => {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw {
+      type: 'SERVER_RESPONSE_ERROR',
+      status: response.status,
       message: errorData.message || 'Error en la petición',
       errors: errorData.errors || [],
     };

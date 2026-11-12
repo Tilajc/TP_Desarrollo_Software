@@ -114,7 +114,11 @@ const Subscriptions = () => {
   };
 
   if (coursesError || subscriptionsError)
-    return <p className="p-4 text-red-500">Error al cargar los cursos.</p>;
+    return (
+      <p className="p-4 text-red-500">
+        Error al cargar los cursos. Intente nuevamente mas tarde.
+      </p>
+    );
 
   const loading = !me || coursesLoading || subscriptionsLoading;
 
