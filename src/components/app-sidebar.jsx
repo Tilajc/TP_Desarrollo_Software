@@ -6,7 +6,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -14,13 +14,46 @@ import useLoginStatus from '../store/useLoginStatus';
 import { useGetMe } from '../hooks/useAuth';
 
 const MENU_ITEMS = [
-  { title: 'Inicio', to: '/', roles: ['ADMIN', 'USER'] },
-  { title: 'Materias', to: '/subjects', roles: ['ADMIN', 'USER'] },
-  { title: 'Tarjetas', to: '/cards', roles: ['USER'] },
-  { title: 'Usuarios', to: '/users', roles: ['ADMIN'] },
-  { title: 'Cursos', to: '/courses', roles: ['ADMIN'] },
-  { title: 'Mis Cursos', to: '/my-courses', roles: ['USER'] },
-  { title: 'Suscripciones', to: '/subscriptions', roles: ['USER'] },
+  {
+    title: 'Inicio',
+    to: '/',
+    roles: ['ADMIN', 'USER'],
+  },
+  {
+    title: 'Materias',
+    to: '/subjects',
+    roles: ['ADMIN', 'USER'],
+  },
+  {
+    title: 'Tarjetas',
+    to: '/cards',
+    roles: ['USER'],
+  },
+  {
+    title: 'Usuarios',
+    to: '/users',
+    roles: ['ADMIN'],
+  },
+  {
+    title: 'Cursos',
+    to: '/courses',
+    roles: ['ADMIN'],
+  },
+  {
+    title: 'Recuperación',
+    to: '/recovery',
+    roles: ['ADMIN'],
+  },
+  {
+    title: 'Mis Cursos',
+    to: '/my-courses',
+    roles: ['USER'],
+  },
+  {
+    title: 'Suscripciones',
+    to: '/subscriptions',
+    roles: ['USER'],
+  },
 ];
 
 const AppSidebar = () => {
@@ -36,12 +69,13 @@ const AppSidebar = () => {
     if (!isLoggedIn) {
       return item.to === '/';
     }
+
     return item.roles.includes(userRole);
   });
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    queryClient.clear();
+    queryClient.clear(); // Limpia la caché en memoria para que Home detecte el cierre al instante
     logout();
     navigate('/');
   };
@@ -64,19 +98,12 @@ const AppSidebar = () => {
           <ul className="flex flex-col gap-2">
             {visibleMenuItems.map((item) => (
               <li key={item.to} className="mb-2">
-                <NavLink
+                <Link
                   to={item.to}
-                  end={item.to === '/'}
-                  className={({ isActive }) =>
-                    `block p-2 text-md font-semibold rounded transition-colors ${
-                      isActive
-                        ? 'bg-slate-800 text-slate-50'
-                        : 'text-slate-400 hover:text-slate-50 hover:bg-slate-800'
-                    }`
-                  }
+                  className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
                 >
                   {item.title}
-                </NavLink>
+                </Link>
               </li>
             ))}
           </ul>
@@ -84,18 +111,12 @@ const AppSidebar = () => {
           <div className="pt-4 border-t border-slate-800">
             {isLoggedIn ? (
               <div className="flex flex-col gap-1">
-                <NavLink
+                <Link
                   to="/profile"
-                  className={({ isActive }) =>
-                    `block p-2 text-md font-semibold rounded transition-colors ${
-                      isActive
-                        ? 'bg-slate-800 text-slate-50'
-                        : 'text-slate-400 hover:text-slate-50 hover:bg-slate-800'
-                    }`
-                  }
+                  className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
                 >
                   Mi Perfil
-                </NavLink>
+                </Link>
                 <button
                   type="button"
                   className="w-full text-left block p-2 text-md font-semibold text-red-400 hover:text-red-300 hover:bg-slate-800 rounded transition-colors cursor-pointer"
@@ -106,34 +127,22 @@ const AppSidebar = () => {
               </div>
             ) : (
               <div className="flex flex-col gap-1">
-                <NavLink
+                <Link
                   to="/login"
-                  className={({ isActive }) =>
-                    `block p-2 text-md font-semibold rounded transition-colors ${
-                      isActive
-                        ? 'bg-slate-800 text-slate-50'
-                        : 'text-slate-400 hover:text-slate-50 hover:bg-slate-800'
-                    }`
-                  }
+                  className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
                   onClick={() => {
                     localStorage.removeItem('token');
                     queryClient.clear();
                   }}
                 >
                   Iniciar Sesión
-                </NavLink>
-                <NavLink
+                </Link>
+                <Link
                   to="/register"
-                  className={({ isActive }) =>
-                    `block p-2 text-md font-semibold rounded transition-colors ${
-                      isActive
-                        ? 'bg-slate-800 text-slate-50'
-                        : 'text-slate-400 hover:text-slate-50 hover:bg-slate-800'
-                    }`
-                  }
+                  className="block p-2 text-md font-semibold text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded transition-colors"
                 >
                   Registrarte
-                </NavLink>
+                </Link>
               </div>
             )}
           </div>

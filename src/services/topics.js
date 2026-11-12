@@ -28,3 +28,13 @@ export const deleteTopic = async (id) => {
     method: 'DELETE',
   });
 };
+
+export const getDeletedTopics = async () => {
+  return apiFetch('/topics/deleted');
+};
+
+export const restoreTopic = async (id) => {
+  return apiFetch(`/topics/${id}/restore`, {
+    method: 'POST',
+  });
+};

@@ -24,6 +24,7 @@ import TopicCards from './pages/Admin/TopicCards.jsx';
 import Login from './pages/Login.jsx';
 import Signup from './pages/Signup.jsx';
 import Courses from './pages/Admin/Courses.jsx';
+import Recovery from './pages/Admin/Recovery.jsx';
 import CourseSubscriptions from './pages/Admin/CourseSubscriptions';
 import NotFound from './pages/NotFound.jsx';
 import Profile from './pages/Profile';
@@ -106,6 +107,10 @@ const router = createBrowserRouter([
       {
         path: '/courses/:courseId/subscriptions',
         element: <CourseSubscriptions />,
+      },
+      {
+        path: '/recovery',
+        element: <Recovery />,
       },
       {
         path: '/profile',

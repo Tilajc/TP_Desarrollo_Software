@@ -6,6 +6,7 @@ export const LocationDisplay = () => (
   <div data-testid="location">{useLocation().pathname}</div>
 );
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const renderWithProviders = (ui, { route = '/' } = {}) => {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
