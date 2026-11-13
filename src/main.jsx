@@ -14,7 +14,6 @@ import useLoginStatus from './store/useLoginStatus';
 import './index.css';
 import Layout from './Layout';
 import Home from './pages/Home.jsx';
-import Cards from './pages/Cards.jsx';
 import Subjects from './pages/Admin/Subjects.jsx';
 import Summaries from './pages/Admin/Summaries.jsx';
 import Users from './pages/Admin/Users.jsx';
@@ -71,10 +70,6 @@ const router = createBrowserRouter([
       {
         path: '/subject/:subjectId/topic/:topicId/summaries',
         element: <Summaries />,
-      },
-      {
-        path: '/cards',
-        element: <Cards />,
       },
       {
         path: '/students',
