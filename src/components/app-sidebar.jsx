@@ -25,7 +25,7 @@ const MENU_ITEMS = [
     roles: ['ADMIN', 'USER'],
   },
   {
-    title: 'Study',
+    title: 'Estudiar',
     to: '/study',
     roles: ['USER'],
   },
