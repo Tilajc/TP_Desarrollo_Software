@@ -82,11 +82,6 @@ const Courses = () => {
     ];
   }, [isAdmin, users, subjects]);
 
-  const handleOpenCreate = () => {
-    setSelectedCourse(null);
-    setIsModalOpen(true);
-  };
-
   const handleOpenEdit = (course) => {
     setSelectedCourse(course);
     setIsModalOpen(true);
@@ -150,12 +145,6 @@ const Courses = () => {
     <div className="p-6 max-w-5xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Cursos</h1>
-        <Button
-          onClick={handleOpenCreate}
-          className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
-        >
-          + Crear Curso
-        </Button>
       </div>
 
       {isLoading ? (
